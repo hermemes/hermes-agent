@@ -62,6 +62,8 @@ _HERMES_CORE_TOOLS = [
     "ha_list_entities", "ha_get_state", "ha_list_services", "ha_call_service",
     # Binance Web3 / EVM-compatible chain tools
     "web3_get_balance", "web3_get_token_balance", "web3_get_gas_price", "web3_get_transaction",
+    # BSC KOL profiling and follow-copy decision tools
+    "kol_analyze", "kol_decision", "kol_pool_scan", "kol_pool_load", "kol_report",
 ]
 
 
@@ -177,6 +179,18 @@ TOOLSETS = {
             "web3_get_token_balance",
             "web3_get_gas_price",
             "web3_get_transaction",
+        ],
+        "includes": []
+    },
+
+    "kol": {
+        "description": "BSC KOL profiling and follow-copy decision tools: analyze KOL wallets with 25+ on-chain dimensions, generate quantified follow-copy decisions, batch-scan KOL pools, and produce weekly/monthly reports",
+        "tools": [
+            "kol_analyze",
+            "kol_decision",
+            "kol_pool_scan",
+            "kol_pool_load",
+            "kol_report",
         ],
         "includes": []
     },

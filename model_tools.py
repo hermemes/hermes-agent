@@ -159,6 +159,7 @@ def _discover_tools():
         # "tools.honcho_tools",  # Removed — Honcho is now a memory provider plugin
         "tools.homeassistant_tool",
         "tools.binance_web3_tool",
+        "tools.bsc_kol_tool",
     ]
     import importlib
     for mod_name in _modules:
