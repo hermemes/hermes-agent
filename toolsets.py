@@ -60,6 +60,8 @@ _HERMES_CORE_TOOLS = [
     "send_message",
     # Home Assistant smart home control (gated on HASS_TOKEN via check_fn)
     "ha_list_entities", "ha_get_state", "ha_list_services", "ha_call_service",
+    # Binance Web3 / EVM-compatible chain tools
+    "web3_get_balance", "web3_get_token_balance", "web3_get_gas_price", "web3_get_transaction",
 ]
 
 
@@ -168,6 +170,17 @@ TOOLSETS = {
         "includes": []
     },
     
+    "web3": {
+        "description": "Binance Web3 / EVM-compatible chain tools: read balances, token balances, gas prices, and transaction details on Ethereum, BSC, Polygon, Arbitrum, and Base",
+        "tools": [
+            "web3_get_balance",
+            "web3_get_token_balance",
+            "web3_get_gas_price",
+            "web3_get_transaction",
+        ],
+        "includes": []
+    },
+
     "session_search": {
         "description": "Search and recall past conversations with summarization",
         "tools": ["session_search"],

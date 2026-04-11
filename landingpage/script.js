@@ -519,3 +519,162 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// =========================================================================
+// Web3 Wallet Connect — EIP-6963 + window.ethereum fallback
+// Binance Web3 Connect EVM-Compatible Provider integration
+// =========================================================================
+
+const CHAIN_NAMES = {
+  "0x1": "Ethereum",
+  "0x38": "BNB Chain",
+  "0x89": "Polygon",
+  "0xa4b1": "Arbitrum",
+  "0x2105": "Base",
+};
+
+let _web3Provider = null;
+let _web3Signer = null;
+
+// Discover wallets via EIP-6963 (auto-detects Binance Web3 Wallet, MetaMask, etc.)
+const _eip6963Providers = [];
+
+function _setupEIP6963() {
+  window.addEventListener("eip6963:announceProvider", (event) => {
+    const { info, provider } = event.detail;
+    const existing = _eip6963Providers.find((p) => p.info.uuid === info.uuid);
+    if (!existing) {
+      _eip6963Providers.push({ info, provider });
+    }
+  });
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
+}
+
+function _getBestProvider() {
+  // Prefer Binance Web3 Wallet via EIP-6963
+  const binance = _eip6963Providers.find(
+    (p) =>
+      p.info.name?.toLowerCase().includes("binance") ||
+      p.info.rdns === "wallet.binance.com"
+  );
+  if (binance) return binance.provider;
+
+  // Any other EIP-6963 provider
+  if (_eip6963Providers.length > 0) return _eip6963Providers[0].provider;
+
+  // Fallback: window.binancew3w.ethereum (Binance in-app browser)
+  if (typeof window !== "undefined" && window.binancew3w?.ethereum) {
+    return window.binancew3w.ethereum;
+  }
+
+  // Last resort: window.ethereum (MetaMask / generic)
+  if (typeof window !== "undefined" && window.ethereum) {
+    return window.ethereum;
+  }
+
+  return null;
+}
+
+async function connectWallet() {
+  const raw = _getBestProvider();
+  if (!raw) {
+    alert(
+      "No wallet detected.\n\nPlease install Binance Web3 Wallet, MetaMask, or any EIP-6963 compatible wallet."
+    );
+    return;
+  }
+
+  const btn = document.getElementById("btn-connect");
+  if (btn) {
+    btn.textContent = "Connecting…";
+    btn.disabled = true;
+  }
+
+  try {
+    // ethers v6 BrowserProvider
+    _web3Provider = new ethers.BrowserProvider(raw);
+    await _web3Provider.send("eth_requestAccounts", []);
+    _web3Signer = await _web3Provider.getSigner();
+
+    const address = await _web3Signer.getAddress();
+    const network = await _web3Provider.getNetwork();
+    const chainHex = "0x" + network.chainId.toString(16);
+    const chainName = CHAIN_NAMES[chainHex] || `Chain ${network.chainId}`;
+    const balanceBig = await _web3Provider.getBalance(address);
+    const balance = ethers.formatEther(balanceBig);
+    const symbol = _nativeSymbol(chainHex);
+
+    _showConnected(address, chainName, `${parseFloat(balance).toFixed(6)} ${symbol}`);
+
+    // Listen for account / chain changes
+    raw.on("accountsChanged", (accounts) => {
+      if (accounts.length === 0) {
+        disconnectWallet();
+      } else {
+        connectWallet();
+      }
+    });
+    raw.on("chainChanged", () => connectWallet());
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+    if (btn) {
+      btn.textContent = "Connect Wallet";
+      btn.disabled = false;
+    }
+    if (err.code !== 4001) {
+      alert("Connection failed: " + (err.message || err));
+    }
+  }
+}
+
+function disconnectWallet() {
+  _web3Provider = null;
+  _web3Signer = null;
+  _showDisconnected();
+}
+
+function _showConnected(address, network, balance) {
+  const shortAddr =
+    address.slice(0, 6) + "…" + address.slice(-4);
+
+  const elConnected = document.getElementById("wallet-connected");
+  const elDisconnected = document.getElementById("wallet-disconnected");
+  const elAddr = document.getElementById("wallet-address");
+  const elNet = document.getElementById("wallet-network");
+  const elBal = document.getElementById("wallet-balance");
+
+  if (elDisconnected) elDisconnected.style.display = "none";
+  if (elConnected) elConnected.style.display = "block";
+  if (elAddr) elAddr.textContent = shortAddr;
+  if (elNet) elNet.textContent = network;
+  if (elBal) elBal.textContent = balance;
+}
+
+function _showDisconnected() {
+  const elConnected = document.getElementById("wallet-connected");
+  const elDisconnected = document.getElementById("wallet-disconnected");
+  const btn = document.getElementById("btn-connect");
+
+  if (elConnected) elConnected.style.display = "none";
+  if (elDisconnected) elDisconnected.style.display = "block";
+  if (btn) {
+    btn.textContent = "Connect Wallet";
+    btn.disabled = false;
+  }
+}
+
+function _nativeSymbol(chainHex) {
+  const map = {
+    "0x1": "ETH",
+    "0x38": "BNB",
+    "0x89": "MATIC",
+    "0xa4b1": "ETH",
+    "0x2105": "ETH",
+  };
+  return map[chainHex] || "ETH";
+}
+
+// Init EIP-6963 discovery on page load
+if (typeof window !== "undefined") {
+  _setupEIP6963();
+}

@@ -1155,6 +1155,305 @@ strong {
     }
 }
 
+/* =========================================================================
+   Web3 / Binance Connect Section
+   ========================================================================= */
+
+.section-web3 {
+    background: linear-gradient(180deg, transparent 0%, rgba(240, 185, 11, 0.03) 50%, transparent 100%);
+}
+
+.section-subtitle {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0.75rem auto 0;
+    line-height: 1.7;
+}
+
+.web3-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+}
+
+@media (max-width: 900px) {
+    .web3-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Shared card base */
+.web3-connect-card,
+.web3-caps-card,
+.web3-networks-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.2s var(--ease-out-quad), background 0.2s var(--ease-out-quad);
+}
+
+.web3-connect-card:hover,
+.web3-caps-card:hover,
+.web3-networks-card:hover {
+    border-color: rgba(240, 185, 11, 0.25);
+    background: var(--bg-card-hover);
+}
+
+.web3-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.web3-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(240, 185, 11, 0.1);
+    border: 1px solid rgba(240, 185, 11, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F0B90B;
+    flex-shrink: 0;
+}
+
+.web3-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+
+.web3-card-desc {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+}
+
+/* --- Connect button --- */
+.btn-connect-wallet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    background: linear-gradient(135deg, #F0B90B 0%, #d4a209 100%);
+    color: #0A0E1A;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-connect-wallet:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-connect-wallet:active {
+    transform: translateY(0);
+}
+
+.wallet-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+}
+
+/* --- Connected state --- */
+.wallet-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.wallet-dot-live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 6px #22c55e;
+    flex-shrink: 0;
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.wallet-address {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wallet-network {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    background: rgba(240, 185, 11, 0.12);
+    color: #F0B90B;
+    border: 1px solid rgba(240, 185, 11, 0.25);
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.wallet-balance-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    background: rgba(48, 80, 255, 0.06);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+}
+
+.wallet-balance-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.wallet-balance-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.btn-disconnect {
+    width: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    font-family: var(--font-sans);
+}
+
+.btn-disconnect:hover {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+/* --- Tool list --- */
+.web3-tool-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+}
+
+.web3-tool-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(48, 80, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.tool-emoji {
+    font-size: 1rem;
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+.web3-tool-list li div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.web3-tool-list li strong {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--primary-light);
+}
+
+.web3-tool-list li span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* --- Network list --- */
+.network-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.network-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(48, 80, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.network-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.network-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text);
+}
+
+.network-symbol {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.web3-provider-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.web3-provider-note a {
+    color: #F0B90B;
+}
+
+.web3-provider-note a:hover {
+    color: #d4a209;
+}
+
 /* --- Selection --- */
 ::selection {
     background: rgba(48, 80, 255, 0.25);

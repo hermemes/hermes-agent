@@ -56,6 +56,7 @@
         <div class="nav-links">
           <a href="#install">Install</a>
           <a href="#features">Features</a>
+          <a href="#web3">Web3</a>
           <a href="/docs/">Docs</a>
           <a
             href="https://github.com/NousResearch/hermes-agent"
@@ -648,6 +649,158 @@ hermes gateway install</code></pre>
       </div>
     </section>
 
+    <!-- Web3 / Binance Connect Section -->
+    <section class="section section-web3" id="web3">
+      <div class="container">
+        <div class="section-header">
+          <h2>Web3 Ready</h2>
+          <p class="section-subtitle">
+            Connect your wallet and let Hermemes Agent query on-chain data — balances,
+            transactions, gas prices — across Ethereum, BSC, Polygon, Arbitrum, and Base.
+          </p>
+        </div>
+
+        <div class="web3-grid">
+          <!-- Connect Wallet Card -->
+          <div class="web3-connect-card">
+            <div class="web3-card-header">
+              <div class="web3-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/>
+                  <path d="M2 10h20"/>
+                </svg>
+              </div>
+              <h3>Connect Wallet</h3>
+            </div>
+            <p class="web3-card-desc">
+              Uses the <strong>EIP-6963</strong> standard — auto-detects Binance Web3 Wallet,
+              MetaMask, and any injected provider. No proprietary SDK needed.
+            </p>
+
+            <div class="web3-wallet-status" id="wallet-status">
+              <div class="wallet-disconnected" id="wallet-disconnected">
+                <button class="btn-connect-wallet" id="btn-connect" onclick="connectWallet()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                  Connect Wallet
+                </button>
+                <p class="wallet-hint">Supports Binance Web3 Wallet, MetaMask &amp; all EIP-6963 wallets</p>
+              </div>
+
+              <div class="wallet-connected" id="wallet-connected" style="display:none">
+                <div class="wallet-info-row">
+                  <span class="wallet-dot-live"></span>
+                  <span class="wallet-address" id="wallet-address">—</span>
+                  <span class="wallet-network" id="wallet-network">—</span>
+                </div>
+                <div class="wallet-balance-row">
+                  <span class="wallet-balance-label">Balance</span>
+                  <span class="wallet-balance-value" id="wallet-balance">—</span>
+                </div>
+                <button class="btn-disconnect" onclick="disconnectWallet()">Disconnect</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Capabilities Card -->
+          <div class="web3-caps-card">
+            <div class="web3-card-header">
+              <div class="web3-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+              </div>
+              <h3>Agent Web3 Tools</h3>
+            </div>
+            <p class="web3-card-desc">
+              Hermemes can call these tools autonomously during any conversation:
+            </p>
+            <ul class="web3-tool-list">
+              <li>
+                <span class="tool-emoji">💰</span>
+                <div>
+                  <strong>web3_get_balance</strong>
+                  <span>Native token balance (ETH, BNB, MATIC…)</span>
+                </div>
+              </li>
+              <li>
+                <span class="tool-emoji">🪙</span>
+                <div>
+                  <strong>web3_get_token_balance</strong>
+                  <span>ERC-20 balance — reads symbol &amp; decimals automatically</span>
+                </div>
+              </li>
+              <li>
+                <span class="tool-emoji">⛽</span>
+                <div>
+                  <strong>web3_get_gas_price</strong>
+                  <span>Current gas price &amp; base fee</span>
+                </div>
+              </li>
+              <li>
+                <span class="tool-emoji">🔍</span>
+                <div>
+                  <strong>web3_get_transaction</strong>
+                  <span>Transaction status, value, fee by hash</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Supported Networks Card -->
+          <div class="web3-networks-card">
+            <div class="web3-card-header">
+              <div class="web3-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </div>
+              <h3>Supported Networks</h3>
+            </div>
+            <div class="network-list">
+              <div class="network-item">
+                <span class="network-dot" style="background:#627EEA"></span>
+                <span class="network-name">Ethereum</span>
+                <span class="network-symbol">ETH</span>
+              </div>
+              <div class="network-item">
+                <span class="network-dot" style="background:#F0B90B"></span>
+                <span class="network-name">BNB Smart Chain</span>
+                <span class="network-symbol">BNB</span>
+              </div>
+              <div class="network-item">
+                <span class="network-dot" style="background:#8247E5"></span>
+                <span class="network-name">Polygon</span>
+                <span class="network-symbol">MATIC</span>
+              </div>
+              <div class="network-item">
+                <span class="network-dot" style="background:#28A0F0"></span>
+                <span class="network-name">Arbitrum One</span>
+                <span class="network-symbol">ETH</span>
+              </div>
+              <div class="network-item">
+                <span class="network-dot" style="background:#0052FF"></span>
+                <span class="network-name">Base</span>
+                <span class="network-symbol">ETH</span>
+              </div>
+            </div>
+            <p class="web3-provider-note">
+              Powered by
+              <a href="https://developers.binance.com/docs/binance-w3w/evm-compatible-provider" target="_blank" rel="noopener">
+                Binance Web3 Connect EVM Provider
+              </a>
+              &amp; WalletConnect v2 — no proprietary SDK needed.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="footer">
       <div class="container">
         <p class="footer-copy">
@@ -660,6 +813,7 @@ hermes gateway install</code></pre>
       </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
