@@ -160,6 +160,8 @@ def _discover_tools():
         "tools.homeassistant_tool",
         "tools.binance_web3_tool",
         "tools.bsc_kol_tool",
+        "tools.kol_correlation_tool",
+        "tools.token_safety_tool",
     ]
     import importlib
     for mod_name in _modules:
