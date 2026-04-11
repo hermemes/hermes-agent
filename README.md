@@ -5,330 +5,408 @@
 <h1 align="center">Hermemes ☤</h1>
 
 <p align="center">
-  <strong>BSC 链上 KOL 行为智能画像与跟单决策 AI 代理</strong><br/>
-  <em>Autonomous BSC KOL Intelligence Brain — Built on Nous Research Hermes Agent</em>
+  <strong>Autonomous BSC KOL Intelligence & Copy-Trade Decision Agent</strong><br/>
+  <em>Built on Nous Research Hermes Agent — Self-improving · Always-on · Fully Private</em>
 </p>
 
 <p align="center">
   <a href="https://hermemes.xyz"><img src="https://img.shields.io/badge/Website-hermemes.xyz-FFD700?style=for-the-badge" alt="Website"></a>
-  <a href="https://x.com/hermemes_"><img src="https://img.shields.io/badge/X-@hermemes__-000000?style=for-the-badge&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://github.com/hermemes/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <img src="https://img.shields.io/badge/Chain-BSC-F0B90B?style=for-the-badge&logo=binance&logoColor=black" alt="BSC">
+  <a href="https://x.com/hermemes_"><img src="https://img.shields.io/badge/X-@hermemes__-000000?style=for-the-badge&logo=x&logoColor=white" alt="X / Twitter"></a>
+  <a href="https://dorahacks.io/hacker/hermemes"><img src="https://img.shields.io/badge/DoraHacks-hermemes-6C3CE1?style=for-the-badge" alt="DoraHacks"></a>
+  <a href="https://github.com/hermemes/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Chain-BSC-F0B90B?style=for-the-badge&logo=binance&logoColor=black" alt="BNB Smart Chain">
 </p>
 
 ---
 
-## 产品定位 · What is Hermemes?
+## What is Hermemes?
 
-**Hermemes 是一款完全自主、自进化的 BSC 链上 KOL 情报大脑。**
+**Hermemes is a fully autonomous, self-evolving on-chain KOL intelligence brain for BSC.**
 
-它以 [Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent) 为底层框架，在 BSC 上长期运行，通过**闭环学习机制**持续优化对每个 KOL 的行为标签、打分体系和 dump 习惯预测。
+Built on the [Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent) framework, Hermemes runs 24/7 on the BNB Smart Chain, continuously profiling KOL wallets across **25+ quantitative dimensions** and delivering data-driven, actionable copy-trade decisions — not gut feelings.
 
-用户只需输入一个 KOL 钱包池（初始 200 个），Hermemes 就会自动：
+> *"Stop guessing who to follow. Let the data decide."*
 
-- 📡 **实时/定时**拉取链上交易数据（每 4 小时 Cron 扫描）
-- 🏷️ **精细化标签化**（25+ 量化维度，自动进化）
-- 🎯 **给出量化跟单建议**（跟不跟、跟多少 BNB、止盈止损计划）
-- 🧠 **越用越准**（闭环自我改进，每次分析后自动优化 KOL-Profiler 技能）
+### The Problem
 
-> Hermemes 不是一次性工具，而是越跑越聪明的个人专属 AI 伙伴，部署在云端后几乎零维护，闲置成本极低。
+BSC memecoin traders face a consistent set of pain points:
 
----
+- **Opacity** — no reliable way to distinguish genuine early buyers from coordinated pump-and-dump actors
+- **Guesswork** — copy-trade decisions rely on reputation and intuition, not on-chain data
+- **No dump prediction** — KOLs have predictable exit patterns; nobody tracks them systematically
+- **Fragmented data** — gmgn, debank, and similar tools lack long-term, personalized KOL archives
+- **Manual overload** — monitoring 200+ wallets 24/7 is humanly impossible
 
-## 痛点与解决方案 · Problem & Solution
+### The Solution
 
-### 当前痛点
+Hermemes turns the Hermes Agent's closed learning loop, persistent memory, parallel sub-agents, and cron scheduler into a dedicated BSC intelligence engine:
 
-| 痛点 | 描述 |
-|------|------|
-| 🔒 行为透明度低 | 难判断哪些是真实早期买入、哪些是后期收割 |
-| 🤔 靠感觉跟单 | 缺乏量化数据，"跟还是不跟"全凭经验 |
-| ⏰ Dump 时机难预测 | KOL 历史清仓规律无法自动总结 |
-| 📊 数据碎片化 | gmgn 等平台数据不全面，无长期个性化档案 |
-| 👀 监控成本高 | 200 个 KOL 池子不可能 24/7 人工盯盘 |
-
-### Hermemes 方案
-
-Hermemes 将 Hermes Agent 的**闭环学习 + 持久记忆 + 子代理并行 + Cron 定时 + 代码执行能力**，完整适配到 BSC 生态：
-
-- **自主运行**：部署到 Modal/Daytona/VPS 后 24/7 云端运行，无需本地常开
-- **闭环学习**：每次分析新交易后，自动创建/优化 `KOL-Profiler` 技能，越用越准
-- **个性化档案**：为池内每个 KOL 建立独立动态"行为画像文件"（25+ 维度）
-- **量化决策**：一句提问，秒回清晰可执行的跟单建议
+| Capability | Description |
+|---|---|
+| **Autonomous monitoring** | Deploy once to Modal / Daytona / VPS — runs forever, no laptop needed |
+| **Closed learning loop** | After every scan, the KOL-Profiler skill auto-updates its weights and thresholds |
+| **Persistent profiles** | Every KOL gets a private, searchable, ever-evolving behavioral archive |
+| **Quantified decisions** | One question → structured answer: follow or not, how much BNB, when to exit |
 
 ---
 
-## 核心功能 · Core Features
+## Core Features
 
-### 4.1 KOL 池自主扫描与更新
+### 1 · 25+ Quantitative Dimensions (Auto-Evolving)
 
-- 支持 200+ 自定义 BSC 钱包地址池（`kol-pool.md`）
-- Cron 定时（默认每 4 小时）批量拉取最新交易、持仓、PnL
-- 子代理并行分析，高效处理大规模钱包池
+#### A — Performance Metrics *(should I follow this KOL?)*
 
-### 4.2 精细化标签体系（25+ 量化维度 · 动态进化）
+| Metric | Description |
+|---|---|
+| Win Rate (30d / 90d) | Profitable closed positions ÷ total closed positions |
+| Average ROI Multiple | Mean return multiple per trade |
+| Total Realized PnL | Cumulative profit in BNB and USD |
+| Sharpe / Sortino Ratio | Risk-adjusted return quality |
+| Consistency Score | 0–100 composite score penalizing high variance and loss streaks |
+| Rug Avoidance Rate | % of positions closed profitably (proxy for rug detection) |
+| Unrealized PnL Ratio | Current open position floating P&L |
 
-#### A. 性能表现指标（决定"该不该跟"）
+#### B — Entry Behavior *(how early is this KOL?)*
 
-| 维度 | 说明 |
-|------|------|
-| **胜率 Win Rate** | 过去 30/90 天盈利交易占比 |
-| **平均 ROI** | 单笔交易平均回报倍数 |
-| **总实现 PnL** | 累计已实现利润（BNB / USD）|
-| **风险调整收益** | Sharpe / Sortino Ratio |
-| **一致性得分** | Consistency Score（0–100）|
-| **Rug Avoidance Rate** | 成功避开 rug 项目比例 |
-| **未实现 PnL 比率** | 当前持仓浮盈/浮亏 |
+| Metric | Description |
+|---|---|
+| Avg / Median Entry MCAP | Preferred market cap range at first buy |
+| Hours After Launch | Average entry delay after four.meme token creation |
+| Position Size % | Single trade as % of wallet balance |
+| Trading Frequency | Active days and trades per day over 30 days |
+| Pre-graduation Rate | % of entries made before DEX listing (bonding curve phase) |
 
-#### B. 入场行为指标（评估信号质量）
+#### C — Exit / Dump Behavior *(when will this KOL sell?)*
 
-| 维度 | 说明 |
-|------|------|
-| **入场 MCAP 偏好** | 平均/中位入场市值区间 |
-| **入场时机** | 项目上线后平均小时数 |
-| **仓位占用比例** | 单笔入场占用钱包总资产 % |
-| **交易频率** | 过去 30 天活跃天数 / 日均交易笔数 |
-| **专项偏好** | 对某类 meme 的历史胜率 |
+| Metric | Description |
+|---|---|
+| Avg / Median Exit Multiple | Mean multiplier at time of sell |
+| Dump MCAP Range (P50 / P70) | Market cap range where 50–70%+ is typically sold |
+| Avg / Max Hold Days | Typical and maximum position duration |
+| First Sell Tranche % | Typical first sell as % of total position |
+| Trailing Stop Threshold | Estimated drawdown % from peak that triggers full exit |
 
-#### C. 出场 / Dump 行为指标（回答"什么时候跑"）
+#### D — Risk & Position Sizing *(how much should I follow with?)*
 
-| 维度 | 说明 |
-|------|------|
-| **平均出场倍数** | 历史平均卖出时的倍数 |
-| **分批卖出模式** | 典型 tranche 比例 |
-| **Dump MCAP 区间** | 70%+ 清仓最常出现的市值范围 |
-| **最大持仓时长** | 买入到完成 70% 出货的平均/最长天数 |
-| **峰值后回落阈值** | 历史最高点后平均回落 % 时开始大额卖出 |
-| **Trailing Stop 习惯** | 回撤百分比触发清仓阈值 |
+| Metric | Description |
+|---|---|
+| Max Drawdown | Worst historical cumulative loss |
+| Kelly Position % | Optimal follow-trade size from Kelly Criterion |
+| Wallet Correlation | Trade overlap with other KOLs (co-movement / resonance) |
+| Gas Efficiency Score | BSC execution quality metric |
 
-#### D. 风险 & 仓位管理指标（决定"跟多少"）
+#### E — Composite Decision Output
 
-| 维度 | 说明 |
-|------|------|
-| **最大回撤** | Max Drawdown |
-| **Kelly 仓位建议** | 基于历史胜率和赔率自动计算最优跟单仓位 % |
-| **钱包相关性** | 与其他 KOL/鲸鱼的交易重合度 |
-| **Gas / Slippage 效率** | BSC 特有执行力指标 |
-| **跟单匹配度** | 与用户历史偏好匹配百分比（0–100%）|
-
-#### E. 综合决策指标（最终输出）
-
-| 维度 | 说明 |
-|------|------|
-| **跟单置信度** | Confidence Score（0–100）|
-| **预期风险收益比** | RRR（Risk/Reward Ratio）|
-| **整体 KOL 等级** | A+ / A / B / C |
-
-> **标签进化机制**：每完成一次 Cron 扫描或用户反馈跟单结果，Hermemes 自动更新以上所有指标，形成专属 KOL 动态画像。
+| Metric | Description |
+|---|---|
+| Confidence Score | 0–100 weighted composite |
+| Risk/Reward Ratio (RRR) | Expected upside ÷ downside |
+| KOL Grade | A+ / A / B / C / D |
+| Type Label | Early Sniper · Scalper · Mid-Entry · Swing Holder · Momentum |
 
 ---
 
-### 4.3 实时跟单决策引擎 · 示例输出
+### 2 · Real-Time Decision Engine
 
-**用户输入：**
+**User input:**
 ```
-KOL 0xA1b2... 刚在 four.meme 买了 3 BNB 的 $HERMEMES（当前 MCAP 180k）
-```
-
-**Hermemes 输出：**
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🧬 KOL 画像快照（最新更新 2 小时前）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-类型：早期狙击型（胜率 74%）
-入场偏好：MCAP <250k（历史平均入场 92k）
-Dump 习惯：平均 8.9x 出场，最常在 1.4M–2.9M 完成 68% 清仓
-胜率 / 平均 ROI：过去 30 天 74% / +6.3x
-一致性得分：91/100
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 本单量化决策参考
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ 该不该跟：强烈推荐跟单（置信度 87/100）
-   历史类似入场场景胜率 81%，RRR 1:4.2
-
-💰 跟多少：建议 1–1.5 BNB（占当前钱包约 30%）
-   最优仓位建议：1 BNB（Kelly 公式）
-
-📤 什么时候跑（详细止盈计划）：
-   → 5x 前跑 40%（约 MCAP 900k）
-   → 12x 前跑剩余 50%（约 MCAP 2.1M）
-   → 剩余 10% 设 25% 回撤 trailing stop
-   ⏰ 最大建议持仓：48 小时
-
-⚠️ 风险预警：
-   该 KOL 过去 3 次在 18x 后平均回落 62%
-   当前与另一顶级 KOL 交易重合度 68%（共振风险中等）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+KOL 0xA1b2... just bought 3 BNB of $HERMEMES on four.meme (current MCAP $180k)
 ```
 
-### 4.4 多平台推送与交互
+**Hermemes output:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧬  KOL Snapshot  |  0xA1b2...  |  Updated 2h ago
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Type: Early Sniper  |  Grade: A+
+Win Rate: 74% (30d) / 71% (90d)
+Avg ROI: 6.3x  |  Consistency: 91/100
+Preferred Entry MCAP: avg $92k / median $78k
+Dump Pattern: avg 8.9x exit, 68% sold between $1.4M–$2.9M
 
-- Telegram / Discord / X 等 14+ 平台实时警报
-- 支持语音模式、子代理并行分析
-- 自然语言提问，即时返回结构化决策
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯  Decision  |  $HERMEMES @ $180k MCAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Follow:  STRONG BUY  (Confidence 87/100)
+   Similar setups: 81% historical win rate  |  RRR 1:4.2
 
-### 4.5 记忆与报告
+💰 Size:  1.0–1.5 BNB  (Kelly optimal: 1.0 BNB)
 
-- 每个 KOL 一份持久档案（全文搜索可追溯历史）
-- 自动生成「KOL 池周报 / 月报」
-- 跟单结果反馈闭环，自动校准标签精度
+📤 Exit Plan:
+   → Sell 40% at 5x  (~$900k MCAP)
+   → Sell 50% at 12x (~$2.1M MCAP)
+   → Trailing stop 25% on remaining 10%
+   ⏰ Max hold: 48 hours
 
-### 4.6 技能自改进
-
-Hermes Agent 原生能力：自动生成 BSC 专用 `KOL-Profiler` 技能，随每次分析不断优化标签精度和评分权重。
+⚠️ Risks:
+   • KOL dropped 62% avg after 18x in last 3 trades
+   • 68% trade overlap with another top KOL (co-movement risk: medium)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ---
 
-## 技术架构 · Tech Stack
+### 3 · Agent Tool Suite (10 Tools)
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Hermemes Agent                       │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │           Nous Research Hermes Agent             │   │
-│  │   闭环学习 · 持久记忆 · 子代理并行 · Cron 定时  │   │
-│  └─────────────────────────────────────────────────┘   │
-│                                                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │  BSC RPC     │  │ BscScan API  │  │DexScreener   │  │
-│  │  数据采集     │  │  交易历史     │  │ 价格/MCAP    │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│                                                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │KOL-Profiler  │  │ Web3 Tools   │  │  Memory DB   │  │
-│  │  Skill (自进化)│  │  (EVM 查询)  │  │  持久画像档案  │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │  Deployment: Modal · Daytona · VPS ($5/mo)       │   │
-│  │  Models: Nous Hermes-3 · Nomos · OpenRouter      │   │
-│  └──────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-```
+All tools are natively callable by the Hermes Agent during any conversation or scheduled cron run.
 
-| 组件 | 技术 |
-|------|------|
-| **底层框架** | [Hermes Agent](https://github.com/NousResearch/hermes-agent)（MIT 开源）|
-| **区块链适配** | BSC RPC + web3.py + BscScan / DexScreener / PancakeSwap |
-| **Web3 工具** | `web3_get_balance` · `web3_get_token_balance` · `web3_get_gas_price` · `web3_get_transaction` |
-| **部署方式** | Modal / Daytona（Serverless）或低成本 VPS |
-| **模型** | Nous Hermes-3 / Nomos 系列（优先）|
-| **安全** | 容器隔离、命令审批、授权机制 |
-| **推送** | Telegram · Discord · X 等 14+ 平台 |
+| Tool | Description |
+|---|---|
+| 🧬 `kol_analyze` | Full 25+ dimension profile for any BSC wallet |
+| 🎯 `kol_decision` | Quantified copy-trade decision for a new KOL buy event |
+| 📡 `kol_pool_scan` | Batch-scan all wallets in the KOL pool, ranked by confidence |
+| 📋 `kol_pool_load` | Load and display the KOL pool by tier |
+| 📊 `kol_report` | Generate weekly / monthly KOL pool summary report |
+| 🔗 `kol_correlation_matrix` | Pairwise trading correlation across the KOL pool |
+| ⚡ `kol_comovement_scan` | Smart-money convergence: tokens multiple KOLs bought together |
+| 🔗 `kol_wallet_overlap` | Compare two wallets' trading overlap and time-correlation |
+| 🛡️ `token_safety_check` | Full honeypot + rug + tax audit (honeypot.is + GoPlus Security) |
+| ⚡ `token_quick_check` | Fast honeypot simulation only (< 2 seconds) |
+
+Plus **4 Web3 EVM tools** via Binance Web3 Connect:
+`web3_get_balance` · `web3_get_token_balance` · `web3_get_gas_price` · `web3_get_transaction`
 
 ---
 
-## 快速上手 · Quick Start
+### 4 · Token Safety — Pre-Trade Audit
 
-### 1. 安装 Hermes Agent
+Before generating any copy-trade recommendation, Hermemes automatically audits the target token:
+
+- **honeypot.is** — buy/sell transaction simulation
+- **GoPlus Security API** — mint function, pause function, blacklist, whitelist, ownership
+- **On-chain** — owner renounced status, top-10 holder concentration, liquidity lock
+- **Tax check** — buy tax and sell tax % from simulation
+
+Risk scoring: **0–100** with severity-weighted flags and a plain-language recommendation.
+
+---
+
+### 5 · KOL Correlation & Smart-Money Convergence
+
+```
+"3 A+ KOLs all bought $HERMEMES within 4 hours of each other.
+ Signal strength: 92/100. Combined: 8.3 BNB."
+```
+
+- **Jaccard similarity** — shared token overlap between any two KOL wallets
+- **Time-correlation** — how often two KOLs buy within the same 24-hour window
+- **Co-movement alerts** — automatically surfaced when 2+ KOLs converge on the same token
+
+---
+
+### 6 · four.meme Integration
+
+Hermemes connects directly to [four.meme](https://four.meme) — the primary BSC meme launchpad:
+
+- Token launch timestamp → compute exact **hours-after-launch** for each KOL entry
+- Bonding curve progress at time of entry
+- Pre-graduation vs. post-DEX-listing entry rate
+- Creator wallet tracking
+- Trending / graduating token feed
+
+---
+
+### 7 · Automated Monitoring & Alerts
+
+```
+# Register a cron job via the agent
+"Scan kol-pool.md every 4 hours and alert me on Telegram when any A-grade
+ KOL makes a new buy over 0.5 BNB with confidence > 70"
+```
+
+- Cron-based pool scanner (`cron/kol_pool_cron.py`) detects new buys vs. last known state
+- Delivers structured alerts to **Telegram, Discord, X** and 11 other platforms
+- Alert thresholds configurable via env vars (`KOL_ALERT_MIN_CONFIDENCE`, `KOL_ALERT_MIN_BNB`)
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       Hermemes Agent                         │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │          Nous Research Hermes Agent Core             │    │
+│  │  Closed Loop · Persistent Memory · Cron · Sub-agents│    │
+│  └──────────────────────────────────────────────────────┘    │
+│                                                              │
+│  Data Layer                                                  │
+│  ┌─────────────┐ ┌─────────────┐ ┌───────────┐ ┌────────┐   │
+│  │  BscScan    │ │DexScreener  │ │ four.meme │ │GoPlus  │   │
+│  │  (tx data)  │ │(price/MCAP) │ │(launches) │ │(safety)│   │
+│  └─────────────┘ └─────────────┘ └───────────┘ └────────┘   │
+│                                                              │
+│  Intelligence Layer                                          │
+│  ┌─────────────┐ ┌─────────────┐ ┌───────────────────────┐  │
+│  │KOL Profiler │ │ Correlation │ │   Token Safety        │  │
+│  │25+ metrics  │ │ & Co-move   │ │   honeypot.is + GoPlus│  │
+│  └─────────────┘ └─────────────┘ └───────────────────────┘  │
+│                                                              │
+│  Delivery Layer                                              │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │  Telegram · Discord · X · CLI  (14+ platforms)       │    │
+│  └──────────────────────────────────────────────────────┘    │
+│                                                              │
+│  Deployment: Modal · Daytona · VPS ($5/mo)                   │
+│  Models: Nous Hermes-3 · Nomos · OpenRouter (200+ models)    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+| Component | Technology |
+|---|---|
+| Agent Framework | [Hermes Agent](https://github.com/NousResearch/hermes-agent) (MIT) |
+| On-chain Data | BscScan API + BSC JSON-RPC |
+| Price & MCAP | DexScreener API |
+| Launch Data | four.meme API + on-chain event logs |
+| Safety Audit | honeypot.is + GoPlus Security |
+| Web3 Connect | Binance Web3 EIP-6963 + WalletConnect v2 |
+| Deployment | Modal / Daytona (serverless) or any VPS |
+| Models | Nous Hermes-3 / Nomos (priority) · OpenRouter |
+
+---
+
+## Quick Start
+
+### 1. Install Hermes Agent
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/hermemes/hermes-agent/main/scripts/install.sh | bash
-source ~/.zshrc   # 或 ~/.bashrc
-hermes            # 启动
+source ~/.zshrc
+hermes
 ```
 
-### 2. 配置 BSC 数据源
+### 2. Configure BSC Data Sources
 
 ```bash
-hermes config set BSC_RPC_URL https://bsc-dataseed.binance.org
-hermes config set BSCSCAN_API_KEY your_api_key_here
-hermes config set DEXSCREENER_ENABLED true
+# Copy and fill in your keys
+cp .env.example .env
+
+# Required
+BSCSCAN_API_KEY=your_key    # https://bscscan.com/myapikey (free)
+
+# Optional — improves reliability
+BSC_RPC_URL=https://bsc-mainnet.nodereal.io/v1/YOUR_KEY
 ```
 
-### 3. 导入 KOL 钱包池
-
-创建 `kol-pool.md`（参考 [kol-pool.example.md](kol-pool.example.md)），然后：
+### 3. Set Up Your KOL Pool
 
 ```bash
-hermes             # 进入对话
-> 读取 kol-pool.md，为所有钱包创建初始 KOL 画像档案，并启动每 4 小时的 Cron 定时扫描任务
+cp kol-pool.example.md kol-pool.md
+# Edit kol-pool.md — add your KOL wallet addresses by tier
 ```
 
-### 4. 开启自主运行
+### 4. Start the Agent
 
 ```bash
-hermes gateway setup    # 配置 Telegram / Discord
-hermes gateway start    # 启动消息网关
+hermes
 ```
 
-### 5. 日常决策
-
-在 Telegram / Discord 直接发送：
+Then tell it:
 ```
-KOL 0xA1b2... 刚买了 $XXX，现在 MCAP 150k，该跟吗？
+Load kol-pool.md, build profiles for all wallets, and set up a cron job
+to scan every 4 hours and alert me on Telegram for any new A-grade KOL buy.
+```
+
+### 5. Query Decisions On-Demand
+
+From Telegram, Discord, or CLI:
+```
+KOL 0xA1b2... just bought $HERMEMES on four.meme at $180k MCAP.
+My wallet has 10 BNB. Should I follow?
 ```
 
 ---
 
-## KOL 池配置 · KOL Pool Format
+## KOL Pool Format
 
-参考 [`kol-pool.example.md`](kol-pool.example.md)：
+See [`kol-pool.example.md`](kol-pool.example.md) for the full template.
 
 ```markdown
-# KOL Pool
+## Tier A+ — Elite Snipers
+- 0xA1b2c3... | Early sniper, 80%+ win rate, sub-100k MCAP entries
 
-## Tier A — 顶级狙击手
-- 0xA1b2c3d4... | 备注: 早期狙击型，胜率高，低 MCAP 入场
-- 0xB2c3d4e5... | 备注: 蓝筹系 KOL，稳健，持仓周期长
+## Tier A — Reliable Follow
+- 0xB2c3d4... | Mid-entry, consistent 8–15x exits
 
-## Tier B — 稳定跟单
-- 0xC3d4e5f6... | 备注: 中期入场，8-15x 出场习惯
+## Tier B — Watch List
+- 0xC3d4e5... | Moderate win rate, selective follow
 ```
 
 ---
 
-## 竞争优势 · Why Hermemes
+## Environment Variables
 
-| 对比维度 | 传统工具（gmgn / debank） | Hermemes |
-|----------|--------------------------|----------|
-| 标签体系 | 固定，手动更新 | **25+ 维度，自动进化** |
-| 链上专注 | 多链泛化 | **BSC 原生深度** |
-| 决策输出 | "看数据"为主 | **量化建议：跟多少、什么时候跑** |
-| 数据所有权 | 中心化平台 | **完全私有，数据不出本地** |
-| 运行成本 | 月订阅费 | **Serverless，闲置几乎零费用** |
-| 学习能力 | 无 | **闭环自改进，越用越准** |
-| 监控规模 | 手动盯盘 | **24/7 自主，200+ KOL 并行** |
+| Variable | Required | Description |
+|---|---|---|
+| `BSCSCAN_API_KEY` | **Yes** | BscScan API key — [get free key](https://bscscan.com/myapikey) |
+| `BSC_RPC_URL` | No | BSC RPC endpoint (default: public node) |
+| `KOL_ALERT_MIN_CONFIDENCE` | No | Min confidence score to trigger alert (default: 65) |
+| `KOL_ALERT_MIN_BNB` | No | Min BNB trade size to count as signal (default: 0.3) |
+| `KOL_SCAN_INTERVAL_HOURS` | No | Cron scan frequency (default: 4) |
 
----
-
-## Web3 集成 · Binance Web3 Connect
-
-Hermemes 原生集成 [Binance Web3 Connect EVM-Compatible Provider](https://developers.binance.com/docs/binance-w3w/evm-compatible-provider)，支持：
-
-- EIP-6963 标准钱包自动识别（Binance Web3 Wallet · MetaMask · 所有主流钱包）
-- WalletConnect v2 — 无需专有 SDK
-- 链上工具：`web3_get_balance` · `web3_get_token_balance` · `web3_get_gas_price` · `web3_get_transaction`
-- 支持网络：Ethereum · BSC · Polygon · Arbitrum · Base
+See [`.env.example`](.env.example) for the full list.
 
 ---
 
-## 路线图 · Roadmap
+## Why Hermemes?
 
-- [x] 基础 EVM 链上查询工具（BSC / ETH / Polygon / Arbitrum / Base）
-- [x] Landing Page Web3 Connect 集成
-- [x] Binance Web3 EIP-6963 钱包连接
-- [ ] KOL-Profiler Skill（BSC 专用，自改进）
-- [ ] BscScan / DexScreener 数据适配器
-- [ ] KOL 池批量分析 + Cron 自动扫描
-- [ ] 量化决策引擎（25+ 维度打分模型）
-- [ ] Telegram / Discord 实时警报推送
-- [ ] 周报 / 月报自动生成
-- [ ] KOL 等级动态排行榜（A+ / A / B / C）
-- [ ] PancakeSwap 实时持仓追踪
+| | gmgn / debank | Hermemes |
+|---|---|---|
+| Dimensions | Static labels | **25+ auto-evolving metrics** |
+| Chain focus | Multi-chain generic | **BSC native depth** |
+| Decision output | View data only | **Actionable: how much, when to exit** |
+| Data ownership | Centralized platform | **Fully private, local-first** |
+| Running cost | Monthly subscription | **Serverless — near zero when idle** |
+| Learning ability | None | **Closed loop, improves with every scan** |
+| Scale | Manual | **200+ KOLs, 24/7 autonomous** |
+| Safety checks | None | **Honeypot + rug + tax audit pre-trade** |
+| Co-movement | None | **Smart-money convergence detection** |
+
+---
+
+## Web3 Integration
+
+Hermemes integrates the [Binance Web3 Connect EVM-Compatible Provider](https://developers.binance.com/docs/binance-w3w/evm-compatible-provider):
+
+- **EIP-6963** standard — auto-detects Binance Web3 Wallet, MetaMask, and any injected provider
+- **WalletConnect v2** — no proprietary SDK required
+- Supported networks: **Ethereum · BSC · Polygon · Arbitrum · Base**
 
 ---
 
-## 许可证 · License
+## Roadmap
 
-MIT License — 基于 [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) 构建
+- [x] BscScan + DexScreener data pipeline
+- [x] 25+ dimension KOL analysis engine
+- [x] Quantified copy-trade decision output (Kelly sizing, TP targets, trailing stop)
+- [x] four.meme launch timing integration
+- [x] KOL correlation matrix & co-movement alerts
+- [x] Token safety audit (honeypot.is + GoPlus)
+- [x] Cron-based automated pool scanner
+- [x] Binance Web3 Connect EIP-6963 wallet integration
+- [ ] PancakeSwap v3 LP position tracking
+- [ ] On-chain alert via BSC WebSocket subscriptions (real-time, sub-second)
+- [ ] KOL leaderboard UI dashboard
+- [ ] Community KOL pool sharing (opt-in)
+- [ ] Automated backtesting against historical price data
 
 ---
+
+## Links
+
+- 🌐 Website: [hermemes.xyz](https://hermemes.xyz)
+- 𝕏 Twitter / X: [@hermemes_](https://x.com/hermemes_)
+- 🏆 DoraHacks: [dorahacks.io/hacker/hermemes](https://dorahacks.io/hacker/hermemes)
+- 📦 Based on: [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)
+
+---
+
+## License
+
+MIT — built on [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)
 
 <p align="center">
-  Built with ☤ by <a href="https://hermemes.xyz">Hermemes</a> · 
-  <a href="https://x.com/hermemes_">@hermemes_</a> · 
-  Powered by <a href="https://nousresearch.com">Nous Research</a>
+  Built with ☤ by <a href="https://hermemes.xyz">Hermemes</a> ·
+  <a href="https://x.com/hermemes_">@hermemes_</a> ·
+  <a href="https://dorahacks.io/hacker/hermemes">DoraHacks</a>
 </p>
