@@ -56,6 +56,186 @@
   requestAnimationFrame(draw);
 })();
 
+/* ─── WebGL Halftone Character ─── */
+(function initHalftone() {
+  const canvas = document.getElementById('halftone-canvas');
+  const img = document.getElementById('character-src');
+  const wrap = document.getElementById('character-wrap');
+  if (!canvas || !img) return;
+
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const vsSource = `
+    attribute vec2 a_position;
+    attribute vec2 a_texCoord;
+    varying vec2 v_texCoord;
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+      v_texCoord = a_texCoord;
+    }
+  `;
+
+  const fsSource = `
+    precision mediump float;
+    varying vec2 v_texCoord;
+    uniform sampler2D u_image;
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_time;
+    uniform float u_spacing;
+
+    void main() {
+      vec2 pixel = v_texCoord * u_resolution;
+      vec2 cell = floor(pixel / u_spacing) * u_spacing + u_spacing * 0.5;
+      vec2 cellUV = cell / u_resolution;
+
+      vec4 texColor = texture2D(u_image, cellUV);
+      float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
+
+      float dotRadius = gray * u_spacing * 0.48;
+      float dist = length(pixel - cell);
+      float dot = 1.0 - smoothstep(dotRadius - 0.8, dotRadius + 0.8, dist);
+
+      // Mouse reveal field
+      vec2 mousePixel = u_mouse * u_resolution;
+      vec2 diff = (pixel - mousePixel);
+      diff.x *= 0.7; // stretch ellipse
+      float mouseDist = length(diff);
+      float reveal = 1.0 - exp(-dot(diff, diff) / (120.0 * 120.0));
+
+      // Mix halftone dots with original image
+      vec3 dotColor = vec3(dot * gray);
+      vec3 originalColor = texColor.rgb;
+      vec3 finalColor = mix(originalColor, dotColor, reveal);
+
+      // Fade alpha for transparent parts
+      float alpha = max(dot * reveal, (1.0 - reveal)) * texColor.a;
+
+      gl_FragColor = vec4(finalColor, alpha);
+    }
+  `;
+
+  function createShader(type, source) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, source);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(s));
+      gl.deleteShader(s);
+      return null;
+    }
+    return s;
+  }
+
+  const vs = createShader(gl.VERTEX_SHADER, vsSource);
+  const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
+    return;
+  }
+
+  const posLoc = gl.getAttribLocation(program, 'a_position');
+  const texLoc = gl.getAttribLocation(program, 'a_texCoord');
+  const uRes = gl.getUniformLocation(program, 'u_resolution');
+  const uMouse = gl.getUniformLocation(program, 'u_mouse');
+  const uTime = gl.getUniformLocation(program, 'u_time');
+  const uSpacing = gl.getUniformLocation(program, 'u_spacing');
+
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1,  1,-1,  -1,1,
+    -1,1,   1,-1,   1,1
+  ]), gl.STATIC_DRAW);
+
+  const texBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    0,1,  1,1,  0,0,
+    0,0,  1,1,  1,0
+  ]), gl.STATIC_DRAW);
+
+  let mouseX = -1, mouseY = -1;
+  let texture = null;
+  let running = false;
+
+  wrap.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left) / rect.width;
+    mouseY = (e.clientY - rect.top) / rect.height;
+  });
+  wrap.addEventListener('mouseleave', () => {
+    mouseX = -1;
+    mouseY = -1;
+  });
+
+  function loadTexture() {
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  }
+
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  function render(time) {
+    if (!running) return;
+    const t = time * 0.001;
+
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    gl.useProgram(program);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, texBuf);
+    gl.enableVertexAttribArray(texLoc);
+    gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform2f(uMouse, mouseX, mouseY);
+    gl.uniform1f(uTime, t);
+    gl.uniform1f(uSpacing, 6.0 * (Math.min(window.devicePixelRatio || 1, 2)));
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(render);
+  }
+
+  function start() {
+    resize();
+    loadTexture();
+    running = true;
+    requestAnimationFrame(render);
+  }
+
+  if (img.complete && img.naturalWidth > 0) start();
+  else img.addEventListener('load', start);
+
+  window.addEventListener('resize', resize);
+})();
+
 /* ─── GitHub Widget — fetch real data ─── */
 (async function fetchGitHub() {
   const widget = document.getElementById('github-widget');

@@ -76,9 +76,10 @@ console.<span class="cf">log</span>(text);
     </div>
   </div>
 
-  <!-- Character image (right side) -->
-  <div class="character-wrap">
-    <img src="hermemes-character.png" alt="Hermemes AI Agent" class="character-img"/>
+  <!-- Character image (right side) — WebGL Halftone -->
+  <div class="character-wrap" id="character-wrap">
+    <canvas id="halftone-canvas"></canvas>
+    <img src="hermemes-character.png" alt="" class="character-src" id="character-src" crossorigin="anonymous" style="display:none"/>
   </div>
 
   <!-- GitHub repo widget (bottom) -->
