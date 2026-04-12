@@ -45,9 +45,8 @@ html, body {
   font-size: 13px;
   font-weight: 700;
   color: var(--gold);
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
-.topbar-sub { font-size: 10px; color: var(--text-dim); margin-left: 12px; }
 .topbar-left { display: flex; align-items: center; }
 .topbar-right { display: flex; align-items: center; gap: 8px; }
 .topbar-clock { color: var(--text-dim); font-size: 11px; margin-right: 8px; }
@@ -157,21 +156,64 @@ html, body {
 }
 
 .profile-meta { text-align: center; margin-bottom: 10px; }
-.profile-name { font-size: 14px; font-weight: 700; color: var(--gold); display: block; letter-spacing: 1px; }
+.profile-name {
+  font-size: 14px; font-weight: 700; color: var(--gold);
+  display: block; letter-spacing: 1px;
+  transition: all 0.2s;
+}
 .profile-tag { font-size: 9px; color: var(--text-dim); }
 .live-dot::before {
   content: '●'; color: var(--green); margin-right: 4px; font-size: 8px;
 }
-.profile-actions { display: flex; gap: 6px; width: 100%; }
+
+/* ASCII glitch overlay on avatar hover */
+.profile-panel { position: relative; overflow: hidden; cursor: pointer; }
+
+.ascii-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 20, 0.88);
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+.profile-panel:hover .ascii-overlay { opacity: 1; }
+
+.profile-panel:hover .avatar-img {
+  filter: brightness(0.3) contrast(1.5);
+}
+
+.profile-panel:hover .avatar-glow {
+  background: radial-gradient(circle, rgba(240,185,11,0.6) 0%, rgba(240,185,11,0.1) 50%, transparent 70%);
+}
+
+.ascii-text {
+  font-family: var(--font);
+  font-size: 7px;
+  line-height: 1.05;
+  color: var(--gold);
+  white-space: pre;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(240,185,11,0.6);
+  animation: asciiFlicker 0.12s infinite;
+}
+
+@keyframes asciiFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
 .sm-btn {
   flex: 1; padding: 5px; font-family: var(--font); font-size: 10px;
   background: var(--gold); color: #0a0e14; border: none; border-radius: 4px;
-  cursor: pointer; font-weight: 600;
+  cursor: pointer; font-weight: 600; display: none;
 }
-.sm-btn:hover { opacity: 0.85; }
-.sm-outline {
-  background: transparent; border: 1px solid var(--border); color: var(--text-dim);
-}
+.sm-outline { display: none; }
 
 /* Action buttons */
 .action-btn {

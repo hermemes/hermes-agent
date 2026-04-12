@@ -190,9 +190,16 @@ def get_env_status():
         "BSC RPC": "BSC_RPC_URL",
     }
 
+    defaults = {"BSC_RPC_URL": "https://bsc-dataseed1.binance.org"}
+
     for label, env_var in env_map.items():
         val = os.environ.get(env_var, "")
-        checks[label] = "configured" if val else "not configured"
+        if val:
+            checks[label] = "configured"
+        elif env_var in defaults:
+            checks[label] = "configured (default)"
+        else:
+            checks[label] = "not configured"
 
     # Also check .env file in project root
     env_file = PROJECT_DIR / ".env"

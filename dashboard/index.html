@@ -12,8 +12,7 @@
   <!-- ═══════════════ TOP BAR ═══════════════ -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1 class="topbar-title">Hermemes Control Interface</h1>
-      <span class="topbar-sub">embedded Hermes CLI • hermemes</span>
+      <h1 class="topbar-title">☤ HERMEMES</h1>
     </div>
     <div class="topbar-right">
       <span class="topbar-clock" id="clock">00:00:00</span>
@@ -30,19 +29,18 @@
     <aside class="sidebar-left">
 
       <!-- Profile -->
-      <div class="panel profile-panel">
+      <div class="panel profile-panel" id="profile-panel">
+        <div class="ascii-overlay">
+          <pre class="ascii-text" id="ascii-art"></pre>
+        </div>
         <div class="profile-avatar-wrap">
           <div class="avatar-glow"></div>
-          <img src="avatar.png" alt="Hermemes" class="avatar-img"/>
+          <img src="avatar.png" alt="Hermemes" class="avatar-img" id="avatar-img" crossorigin="anonymous"/>
           <div class="avatar-pulse"></div>
         </div>
         <div class="profile-meta">
-          <span class="profile-name">HERMEMES</span>
+          <span class="profile-name" id="profile-name">HERMEMES</span>
           <span class="profile-tag live-dot">hermemes/hermes-agent</span>
-        </div>
-        <div class="profile-actions">
-          <button class="sm-btn" onclick="fetchStatus()">STATUS</button>
-          <button class="sm-btn sm-outline" onclick="fetchStatus()">RESET</button>
         </div>
       </div>
 

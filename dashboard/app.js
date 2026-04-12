@@ -377,6 +377,80 @@ function stopAutoRefresh() {
   if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
 }
 
+/* ─── ASCII Art Avatar Effect ─── */
+(function initAsciiAvatar() {
+  const img = document.getElementById('avatar-img');
+  const asciiEl = document.getElementById('ascii-art');
+  const chars = ' .:-=+*#%@';
+  let asciiReady = false;
+
+  function generateAscii() {
+    if (asciiReady) return;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const w = 28, h = 28;
+    canvas.width = w;
+    canvas.height = h;
+    ctx.drawImage(img, 0, 0, w, h);
+
+    try {
+      const data = ctx.getImageData(0, 0, w, h).data;
+      let ascii = '';
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          const brightness = (data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114) / 255;
+          const charIdx = Math.floor(brightness * (chars.length - 1));
+          ascii += chars[charIdx];
+        }
+        ascii += '\n';
+      }
+      asciiEl.textContent = ascii;
+      asciiReady = true;
+    } catch(e) {
+      asciiEl.textContent = [
+        '    ██╗  ██╗    ',
+        '    ██║  ██║    ',
+        '    ███████║    ',
+        '    ██╔══██║    ',
+        '    ██║  ██║    ',
+        '    ╚═╝  ╚═╝    ',
+        '   HERMEMES    ',
+      ].join('\n');
+      asciiReady = true;
+    }
+  }
+
+  if (img.complete) generateAscii();
+  else img.addEventListener('load', generateAscii);
+
+  let shuffleInterval;
+  const panel = document.getElementById('profile-panel');
+
+  panel.addEventListener('mouseenter', () => {
+    generateAscii();
+    shuffleInterval = setInterval(() => {
+      if (!asciiEl.textContent) return;
+      const lines = asciiEl.textContent.split('\n');
+      const randLine = Math.floor(Math.random() * lines.length);
+      const line = lines[randLine];
+      if (!line) return;
+      const randCol = Math.floor(Math.random() * line.length);
+      const glitchChars = '░▒▓█▀▄╗╔╚╝║═┃━☤◆◇●○';
+      const arr = line.split('');
+      arr[randCol] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      lines[randLine] = arr.join('');
+      asciiEl.textContent = lines.join('\n');
+    }, 60);
+  });
+
+  panel.addEventListener('mouseleave', () => {
+    clearInterval(shuffleInterval);
+    asciiReady = false;
+    generateAscii();
+  });
+})();
+
 /* ─── Init ─── */
 (function init() {
   addLog('INFO', 'Hermemes Control Interface loaded');
