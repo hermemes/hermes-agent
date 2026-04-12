@@ -447,6 +447,148 @@ html, body {
 }
 .link-btn:hover { border-color: var(--gold); color: var(--gold); }
 
+/* ═══ MOBILE — APP VIEW ═══ */
+@media (max-width: 768px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+    min-height: 100vh;
+    -webkit-overflow-scrolling: touch;
+    font-size: 11px;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 6px 10px;
+    height: 42px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(13,17,23,0.92);
+  }
+  .topbar-clock { font-size: 10px; margin-right: 4px; }
+  .tb-btn { font-size: 9px; padding: 4px 8px; }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar-left {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 8px;
+    overflow: visible;
+  }
+
+  .sidebar-right {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 8px;
+    overflow: visible;
+  }
+
+  .center {
+    overflow: visible;
+    padding: 8px;
+  }
+
+  /* Profile compact */
+  .profile-panel {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    min-height: auto;
+  }
+  .profile-avatar-wrap {
+    width: 56px; height: 56px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  .avatar-img { width: 56px; height: 56px; }
+  .profile-meta { text-align: left; margin-bottom: 0; }
+  .profile-name { font-size: 13px; }
+  .profile-tag { font-size: 8px; }
+
+  /* Center top — stack panels */
+  .center-top {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* Monitor grid */
+  .monitor-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-value { font-size: 18px; }
+
+  /* KOL grid */
+  .kol-stats-grid { grid-template-columns: 1fr 1fr; }
+  .kol-stat-val { font-size: 22px; }
+
+  /* Terminal */
+  .terminal-panel { min-height: 250px; }
+  .ascii-banner {
+    font-size: 4px;
+    line-height: 1.05;
+    overflow-x: auto;
+  }
+  .terminal-info p { font-size: 10px; }
+  .terminal-input { font-size: 12px; }
+  .prompt { font-size: 11px; }
+
+  /* Log viewer */
+  .log-body { max-height: 200px; }
+  .log-tab { font-size: 9px; padding: 6px 8px; }
+
+  /* Quick actions — horizontal scroll */
+  .action-btn { font-size: 11px; padding: 8px 10px; }
+  .action-row { flex-wrap: nowrap; }
+
+  /* Chain stats */
+  .chain-stat { padding: 8px 0; font-size: 11px; }
+  .chain-val { font-size: 12px; }
+
+  /* Tool ranking */
+  .tool-rank-name { width: 100px; font-size: 10px; }
+
+  /* Usage stats */
+  .usage-stat { padding: 6px 0; font-size: 11px; }
+
+  /* Panel spacing */
+  .panel { padding: 12px; margin-bottom: 8px; border-radius: 8px; }
+  .panel-title { font-size: 11px; margin-bottom: 10px; }
+
+  /* Links */
+  .panel-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .link-btn { flex: 1; min-width: 80px; font-size: 10px; padding: 8px; border-radius: 6px; }
+
+  /* Agent items */
+  .agent-item { padding: 8px 10px; }
+  .agent-label { font-size: 11px; }
+
+  /* Session items */
+  .session-item { padding: 6px 0; font-size: 11px; }
+
+  /* Info rows */
+  .info-row { font-size: 11px; padding: 4px 0; }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .topbar { padding: 4px 8px; }
+  .tb-btn { font-size: 8px; padding: 3px 6px; }
+  .topbar-clock { display: none; }
+  .profile-avatar-wrap { width: 44px; height: 44px; }
+  .avatar-img { width: 44px; height: 44px; }
+  .ascii-banner { display: none; }
+  .monitor-grid { grid-template-columns: 1fr 1fr; }
+  .kol-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
 /* ═══ SCROLLBAR GLOBAL ═══ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

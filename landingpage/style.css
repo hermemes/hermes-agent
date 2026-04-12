@@ -363,6 +363,66 @@ body {
   position: relative;
 }
 
+/* ═══ MOBILE OPTIMIZATIONS ═══ */
+@media (max-width: 639px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+    min-height: 100vh;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .top-left {
+    top: 12px; left: 12px;
+  }
+  .avatar { width: 32px; height: 32px; }
+  .brand-name { font-size: 14px; }
+
+  .top-right {
+    top: 12px; right: 12px; gap: 12px;
+  }
+  .top-right .social-link svg { width: 16px; height: 16px; }
+
+  .hero {
+    position: relative;
+    top: auto;
+    left: 0; right: 0;
+    padding: 80px 20px 40px;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .hero-sub { margin-top: 12px; }
+  .hero-sub p { font-size: 10px; line-height: 1.8; }
+
+  .code-widget {
+    margin-top: 20px;
+    max-width: 100%;
+    border-radius: 12px;
+  }
+  .code-body { padding: 12px 10px; gap: 10px; }
+  .code-body pre { font-size: 10px; }
+  .code-line-numbers { font-size: 10px; }
+  .code-tab { font-size: 9px; padding: 3px 8px; }
+  .tl { width: 10px; height: 10px; }
+
+  .github-widget {
+    position: relative;
+    bottom: auto; left: auto; right: auto;
+    margin: 30px 20px 40px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 /* ═══ SCROLLBAR ═══ */
 ::-webkit-scrollbar { width: 0; height: 0; }
 ::selection { background: rgba(255,255,255,0.15); }
