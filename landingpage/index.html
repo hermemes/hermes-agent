@@ -43,21 +43,35 @@
       <p>Continuously monitors your custom pool of KOL wallets.</p>
     </div>
 
-    <!-- Code snippet widget -->
+    <!-- Code snippet widget — macOS style -->
     <div class="code-widget">
-      <div class="code-tabs">
-        <button class="code-tab active">Run it with</button>
-        <button class="code-tab accent">AI Gateway</button>
+      <div class="code-titlebar">
+        <div class="traffic-lights">
+          <span class="tl tl-red"></span>
+          <span class="tl tl-yellow"></span>
+          <span class="tl tl-green"></span>
+        </div>
+        <div class="code-tabs">
+          <button class="code-tab active">Run it with</button>
+          <button class="code-tab accent">AI Gateway</button>
+        </div>
       </div>
       <div class="code-body">
+        <div class="code-line-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
         <pre><code><span class="ck">import</span> { generateText } <span class="ck">from</span> <span class="cs">'ai'</span>;
-
+ 
 <span class="ck">const</span> { text } = <span class="ck">await</span> <span class="cf">generateText</span>({
   <span class="cp">model</span>: <span class="cs">"openai/gpt-5.4"</span>,
   <span class="cp">prompt</span>: <span class="cs">'Explain the concept of quantum entanglement.'</span>,
 });
 
-console.<span class="cf">log</span>(text);</code></pre>
+console.<span class="cf">log</span>(text);
+<span class="cursor-blink">▊</span></code></pre>
+      </div>
+      <div class="code-statusbar">
+        <span>TypeScript</span>
+        <span>UTF-8</span>
+        <span>Ln 9, Col 1</span>
       </div>
     </div>
   </div>
