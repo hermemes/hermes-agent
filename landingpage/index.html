@@ -3,252 +3,81 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hermemes — Autonomous AI Agent that turns memecoin chaos into alpha.</title>
-  <meta name="description" content="Built on Nous Research's Hermes Agent, Hermemes runs 24/7 monitoring KOL wallets on BSC, profiling 25+ dimensions, and delivering copy-trade signals."/>
-  <meta name="theme-color" content="#0a0e14"/>
-  <meta property="og:title" content="Hermemes — BSC KOL Intelligence Agent"/>
-  <meta property="og:description" content="Autonomous, self-improving AI Agent that turns memecoins noise into alpha."/>
+  <title>Hermemes - Hermes Agent framework that turns memecoin chaos.</title>
+  <meta name="description" content="Autonomous, self-improving AI agent on NousResearch Hermes Agent framework that turns memecoin chaos into your personal edge."/>
+  <meta name="theme-color" content="#000000"/>
+  <meta property="og:title" content="Hermemes - Hermes Agent framework that turns memecoin chaos."/>
+  <meta property="og:description" content="Autonomous, self-improving AI agent on NousResearch Hermes Agent framework that turns memecoin chaos into your personal edge."/>
   <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://hermemes.xyz"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <!-- Particle canvas background -->
+  <canvas id="particles"></canvas>
 
-  <!-- Cursor trail -->
-  <div id="cursor-trail"></div>
+  <!-- Top left: Avatar + Name -->
+  <div class="top-left">
+    <img src="hermemes-avatar.jpg" alt="Hermemes Avatar" class="avatar" id="avatar"/>
+    <span class="brand-name">Hermemes</span>
+  </div>
 
-  <!-- Nav -->
-  <nav class="nav">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">
-        <span class="nav-logo-icon">☤</span>
-        <span class="nav-brand">Hermemes</span>
-      </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#gateway">AI Gateway</a>
-        <a href="https://github.com/hermemes/hermes-agent" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://x.com/hermemes_" target="_blank" rel="noopener">𝕏</a>
-        <a href="/dashboard/" class="nav-btn">Dashboard →</a>
-      </div>
-      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+  <!-- Top right: Social links -->
+  <div class="top-right">
+    <a href="https://github.com/hermemes/hermes-agent" target="_blank" rel="noopener" class="social-link" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+    </a>
+    <a href="https://x.com/hermemes_" target="_blank" rel="noopener" class="social-link" title="X / Twitter">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+  </div>
+
+  <!-- Hero content -->
+  <div class="hero">
+    <h1 class="hero-title">Autonomous, self-improving AI Agent that</h1>
+    <p class="hero-title hero-title-indent">turns memecoins noise into alpha.</p>
+    <div class="hero-sub">
+      <p>Built on Nous Research's Hermes Agent, it runs 24/7 in the cloud and</p>
+      <p>Continuously monitors your custom pool of KOL wallets.</p>
     </div>
-    <div class="nav-mobile" id="nav-mobile">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#gateway">AI Gateway</a>
-      <a href="https://github.com/hermemes/hermes-agent" target="_blank">GitHub</a>
-      <a href="https://x.com/hermemes_" target="_blank">𝕏</a>
-      <a href="/dashboard/">Dashboard</a>
-    </div>
-  </nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        Built on Hermes Agent by Nous Research
+    <!-- Code snippet widget -->
+    <div class="code-widget">
+      <div class="code-tabs">
+        <button class="code-tab active">Run it with</button>
+        <button class="code-tab accent">AI Gateway</button>
       </div>
-
-      <h1 class="hero-title">
-        Autonomous, self-improving AI Agent that<br/>
-        <span class="hero-gradient">turns memecoins noise into alpha.</span>
-      </h1>
-
-      <p class="hero-subtitle">
-        Built on Nous Research's Hermes Agent, it runs 24/7 in the cloud and<br/>
-        continuously monitors your custom pool of KOL wallets.
-      </p>
-
-      <div class="hero-cta">
-        <a href="https://github.com/hermemes/hermes-agent" class="btn btn-primary" target="_blank">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          View on GitHub
-        </a>
-        <a href="/dashboard/" class="btn btn-outline">
-          Open Dashboard →
-        </a>
-      </div>
-
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="stat-num">14</span>
-          <span class="stat-label">Agent Tools</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-num">25+</span>
-          <span class="stat-label">KOL Dimensions</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-num">5</span>
-          <span class="stat-label">EVM Chains</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-num">24/7</span>
-          <span class="stat-label">Monitoring</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="section" id="features">
-    <div class="container">
-      <div class="section-header">
-        <h2>What Hermemes does</h2>
-        <p class="section-sub">From raw blockchain data to actionable copy-trade decisions — fully autonomous.</p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card feature-highlight">
-          <div class="feature-icon">📊</div>
-          <h3>25+ Dimension KOL Profiling</h3>
-          <p>Win rate, ROI, Sharpe ratio, entry/exit MCAP, Kelly criterion, consistency, rug avoidance — every metric that matters.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔍</div>
-          <h3>Real-Time KOL Monitoring</h3>
-          <p>Cron-based scanning of your custom wallet pool. Instant alerts when top KOLs make new buys.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🛡️</div>
-          <h3>Token Safety Analysis</h3>
-          <p>Honeypot detection, tax analysis, mint/pause checks, holder concentration, liquidity lock verification via GoPlus + honeypot.is.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🤝</div>
-          <h3>KOL Correlation Detection</h3>
-          <p>Jaccard similarity, time-window co-movement, smart-money convergence — find when multiple KOLs align.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⛓️</div>
-          <h3>Multi-Chain Web3</h3>
-          <p>Native BSC focus with support for Ethereum, Polygon, Arbitrum, and Base. Gas prices, balances, transactions via JSON-RPC.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🧠</div>
-          <h3>Self-Improving Agent</h3>
-          <p>Built on Hermes Agent framework — persistent memory, auto-generated skills, gets smarter the longer it runs.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section class="section section-dark" id="how">
-    <div class="container">
-      <div class="section-header">
-        <h2>How it works</h2>
-      </div>
-
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <h4>Define your KOL pool</h4>
-            <p>Add BSC wallet addresses of KOLs you want to track in a simple markdown file.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <h4>Agent scans autonomously</h4>
-            <p>Hermemes fetches transactions from BscScan, enriches with DexScreener market data, and builds 25+ dimension profiles.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <h4>Get actionable signals</h4>
-            <p>Copy/fade/skip decisions with confidence scores, safety checks, and multi-KOL convergence alerts.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- AI Gateway Code Example -->
-  <section class="section" id="gateway">
-    <div class="container">
-      <div class="section-header">
-        <h2>Run it with AI Gateway</h2>
-        <p class="section-sub">Plug into any OpenAI-compatible API via OpenRouter.</p>
-      </div>
-
-      <div class="code-window">
-        <div class="code-header">
-          <div class="code-dots">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-          </div>
-          <span class="code-filename">gateway.ts</span>
-          <button class="code-copy" onclick="copyCode()">Copy</button>
-        </div>
-        <pre class="code-body"><code><span class="ck">import</span> { generateText } <span class="ck">from</span> <span class="cs">'ai'</span>;
+      <div class="code-body">
+        <pre><code><span class="ck">import</span> { generateText } <span class="ck">from</span> <span class="cs">'ai'</span>;
 
 <span class="ck">const</span> { text } = <span class="ck">await</span> <span class="cf">generateText</span>({
   <span class="cp">model</span>: <span class="cs">"openai/gpt-5.4"</span>,
-  <span class="cp">prompt</span>: <span class="cs">'Analyze KOL 0xABC...789 on BSC — full 25-dimension profile.'</span>,
+  <span class="cp">prompt</span>: <span class="cs">'Explain the concept of quantum entanglement.'</span>,
 });
 
 console.<span class="cf">log</span>(text);</code></pre>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Tools Grid -->
-  <section class="section section-dark" id="tools">
-    <div class="container">
-      <div class="section-header">
-        <h2>14 Agent Tools</h2>
-        <p class="section-sub">Every tool the agent can call autonomously during a conversation.</p>
-      </div>
+  <!-- Character image (right side) -->
+  <div class="character-wrap">
+    <img src="hermemes-character.png" alt="Hermemes AI Agent" class="character-img"/>
+  </div>
 
-      <div class="tools-grid">
-        <div class="tool-item"><span class="tool-name">kol_analyze</span><span class="tool-desc">Full 25+ dimension KOL profile</span></div>
-        <div class="tool-item"><span class="tool-name">kol_decision</span><span class="tool-desc">Copy/fade/skip recommendation</span></div>
-        <div class="tool-item"><span class="tool-name">kol_pool_scan</span><span class="tool-desc">Scan entire wallet pool</span></div>
-        <div class="tool-item"><span class="tool-name">kol_report</span><span class="tool-desc">Generate full report</span></div>
-        <div class="tool-item"><span class="tool-name">kol_pool_load</span><span class="tool-desc">Load KOL pool from file</span></div>
-        <div class="tool-item"><span class="tool-name">kol_correlation_matrix</span><span class="tool-desc">Wallet similarity analysis</span></div>
-        <div class="tool-item"><span class="tool-name">kol_comovement_scan</span><span class="tool-desc">Multi-KOL convergence detection</span></div>
-        <div class="tool-item"><span class="tool-name">kol_wallet_overlap</span><span class="tool-desc">Shared token positions</span></div>
-        <div class="tool-item"><span class="tool-name">token_safety_check</span><span class="tool-desc">Full security audit</span></div>
-        <div class="tool-item"><span class="tool-name">token_quick_check</span><span class="tool-desc">Fast honeypot detection</span></div>
-        <div class="tool-item"><span class="tool-name">web3_get_balance</span><span class="tool-desc">Native token balance</span></div>
-        <div class="tool-item"><span class="tool-name">web3_get_token_balance</span><span class="tool-desc">ERC-20 token balance</span></div>
-        <div class="tool-item"><span class="tool-name">web3_get_gas_price</span><span class="tool-desc">Current gas price</span></div>
-        <div class="tool-item"><span class="tool-name">web3_get_transaction</span><span class="tool-desc">Transaction details by hash</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-left">
-        <span class="footer-logo">☤ Hermemes</span>
-        <p>Autonomous BSC KOL Intelligence Agent</p>
-      </div>
-      <div class="footer-links">
-        <a href="https://github.com/hermemes/hermes-agent" target="_blank">GitHub</a>
-        <a href="https://x.com/hermemes_" target="_blank">𝕏 @hermemes_</a>
-        <a href="https://dorahacks.io/hacker/hermemes" target="_blank">DoraHacks</a>
-        <a href="/dashboard/">Dashboard</a>
-      </div>
-      <div class="footer-right">
-        <p>Built on <a href="https://nousresearch.com" target="_blank">Hermes Agent</a> by Nous Research</p>
-        <p class="footer-copy">© 2026 Hermemes · MIT License</p>
-      </div>
-    </div>
-  </footer>
+  <!-- GitHub repo widget (bottom) -->
+  <div class="github-widget" id="github-widget">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="gh-icon"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+    <span class="gh-name">hermes-agent</span>
+    <div class="gh-divider"></div>
+    <span class="gh-stat">⭐ <span id="gh-stars">—</span> <span class="gh-label">stars</span></span>
+    <span class="gh-stat">🔱 <span id="gh-forks">—</span> <span class="gh-label">forks</span></span>
+    <div class="gh-divider"></div>
+    <span class="gh-updated" id="gh-updated">—</span>
+    <div class="gh-contributors" id="gh-contributors"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>

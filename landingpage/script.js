@@ -1,72 +1,128 @@
-/* Hermemes Landing Page */
+/* Hermemes Landing — matching hermemes.xyz */
 
-/* ─── Mobile Nav ─── */
-document.getElementById('nav-hamburger').addEventListener('click', () => {
-  document.getElementById('nav-mobile').classList.toggle('open');
-});
+/* ─── Particle Background ─── */
+(function initParticles() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [];
 
-document.querySelectorAll('.nav-mobile a').forEach(a => {
-  a.addEventListener('click', () => {
-    document.getElementById('nav-mobile').classList.remove('open');
-  });
-});
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-/* ─── Copy Code ─── */
-function copyCode() {
-  const code = document.querySelector('.code-body code').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = document.querySelector('.code-copy');
-    btn.textContent = 'Copied!';
-    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
-  });
-}
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.5 + 0.5,
+      a: Math.random() * 0.3 + 0.05,
+    });
+  }
 
-/* ─── Cursor Trail (hermemes agent letters) ─── */
-(function() {
-  const chars = 'hermemesagent';
-  let lastX = 0, lastY = 0, throttle = 0, count = 0;
-  const MAX = 35;
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
 
-  document.addEventListener('mousemove', (e) => {
-    const now = Date.now();
-    if (now - throttle < 45) return;
-    const dx = e.clientX - lastX, dy = e.clientY - lastY;
-    if (Math.sqrt(dx*dx + dy*dy) < 14) return;
-    throttle = now;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    if (count >= MAX) return;
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = w;
+      if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h;
+      if (p.y > h) p.y = 0;
 
-    const el = document.createElement('span');
-    el.className = 'ascii-particle';
-    el.textContent = chars[Math.floor(Math.random() * chars.length)];
-    const size = 12 + Math.random() * 8;
-    const ox = (Math.random() - 0.5) * 20;
-    const oy = (Math.random() - 0.5) * 20;
-    el.style.left = (e.clientX + ox) + 'px';
-    el.style.top = (e.clientY + oy) + 'px';
-    el.style.fontSize = size + 'px';
-    el.style.setProperty('--dx', ((Math.random()-0.5)*40) + 'px');
-    el.style.setProperty('--dy', (-15 - Math.random()*30) + 'px');
-    document.body.appendChild(el);
-    count++;
-    el.addEventListener('animationend', () => { el.remove(); count--; });
-  });
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+      ctx.fill();
+    }
+
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(255,255,255,${0.04 * (1 - dist / 120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
 })();
 
-/* ─── Scroll animations ─── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-    }
-  });
-}, { threshold: 0.1 });
+/* ─── GitHub Widget — fetch real data ─── */
+(async function fetchGitHub() {
+  const widget = document.getElementById('github-widget');
 
-document.querySelectorAll('.feature-card, .step, .tool-item, .code-window').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(20px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-  observer.observe(el);
-});
+  try {
+    const [repoRes, contribRes] = await Promise.all([
+      fetch('https://api.github.com/repos/NousResearch/hermes-agent'),
+      fetch('https://api.github.com/repos/NousResearch/hermes-agent/contributors?per_page=8'),
+    ]);
+
+    const repo = await repoRes.json();
+    const contribs = await contribRes.json();
+
+    // Stars
+    const starsEl = document.getElementById('gh-stars');
+    animateCount(starsEl, repo.stargazers_count || 0);
+
+    // Forks
+    const forksEl = document.getElementById('gh-forks');
+    animateCount(forksEl, repo.forks_count || 0);
+
+    // Updated
+    const updatedEl = document.getElementById('gh-updated');
+    updatedEl.textContent = timeAgo(repo.pushed_at);
+
+    // Contributors
+    const contribEl = document.getElementById('gh-contributors');
+    if (Array.isArray(contribs)) {
+      contribEl.innerHTML = contribs.map(c =>
+        `<img src="${c.avatar_url}" alt="${c.login}" title="${c.login}"/>`
+      ).join('') + `<span style="font-size:9px;color:rgba(255,255,255,0.2);margin-left:6px">${contribs.length}+</span>`;
+    }
+
+    // Make widget a link
+    widget.onclick = () => window.open('https://github.com/NousResearch/hermes-agent', '_blank');
+
+  } catch (e) {
+    console.error('GitHub fetch error:', e);
+  }
+})();
+
+function animateCount(el, target) {
+  if (target <= 0) { el.textContent = '0'; return; }
+  const duration = 1400;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 4);
+    el.textContent = Math.round(ease * target).toLocaleString();
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return `${Math.floor(days / 30)}mo ago`;
+}
