@@ -379,7 +379,7 @@ function stopAutoRefresh() {
 
 /* ─── Global ASCII Cursor Trail ─── */
 (function initAsciiTrail() {
-  const chars = '☤◆◇░▒▓█╗╔╚╝║═┃━●○#@%&*+~^<>';
+  const chars = 'hermemesagent';
   let lastX = 0, lastY = 0;
   let throttle = 0;
   const MAX_PARTICLES = 40;
