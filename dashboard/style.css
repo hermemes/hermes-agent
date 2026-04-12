@@ -166,61 +166,41 @@ html, body {
   content: '●'; color: var(--green); margin-right: 4px; font-size: 8px;
 }
 
-/* ASCII glitch overlay on avatar hover */
+/* Profile panel */
 .profile-panel {
   position: relative;
   cursor: pointer;
-  min-height: 160px;
+  min-height: 140px;
 }
 
-.ascii-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(6, 8, 12, 0.92);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 10;
+/* ═══ GLOBAL ASCII CURSOR TRAIL ═══ */
+.ascii-particle {
+  position: fixed;
   pointer-events: none;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.profile-panel:hover .ascii-overlay { opacity: 1; }
-
-.profile-panel:hover .avatar-img {
-  filter: brightness(0.2) contrast(1.5);
-  transition: filter 0.3s;
-}
-
-.profile-panel:hover .avatar-glow {
-  background: radial-gradient(circle, rgba(240,185,11,0.7) 0%, rgba(240,185,11,0.15) 50%, transparent 70%);
-}
-
-.profile-panel:hover .profile-name {
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.ascii-text {
+  z-index: 9999;
   font-family: var(--font);
-  font-size: 5.5px;
-  line-height: 1.0;
   color: var(--gold);
-  white-space: pre;
-  text-align: center;
-  text-shadow: 0 0 4px rgba(240,185,11,0.5);
-  animation: asciiFlicker 0.15s infinite;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  user-select: none;
+  animation: asciiFloat 1.2s ease-out forwards;
+  text-shadow: 0 0 6px rgba(240,185,11,0.6);
 }
 
-@keyframes asciiFlicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 4px rgba(240,185,11,0.5); }
-  25% { opacity: 0.92; text-shadow: 0 0 8px rgba(240,185,11,0.7); }
-  50% { opacity: 0.88; text-shadow: 0 0 3px rgba(240,185,11,0.3); }
-  75% { opacity: 0.95; text-shadow: 0 0 6px rgba(240,185,11,0.6); }
+@keyframes asciiFloat {
+  0% {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(1);
+    text-shadow: 0 0 8px rgba(240,185,11,0.8);
+  }
+  50% {
+    opacity: 0.5;
+    text-shadow: 0 0 4px rgba(240,185,11,0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.3);
+    text-shadow: 0 0 0 transparent;
+  }
 }
 .sm-btn {
   flex: 1; padding: 5px; font-family: var(--font); font-size: 10px;

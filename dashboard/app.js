@@ -377,105 +377,60 @@ function stopAutoRefresh() {
   if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
 }
 
-/* ─── ASCII Art Avatar Effect ─── */
-(function initAsciiAvatar() {
-  const img = document.getElementById('avatar-img');
-  const asciiEl = document.getElementById('ascii-art');
-  const panel = document.getElementById('profile-panel');
+/* ─── Global ASCII Cursor Trail ─── */
+(function initAsciiTrail() {
+  const chars = '☤◆◇░▒▓█╗╔╚╝║═┃━●○#@%&*+~^<>';
+  let lastX = 0, lastY = 0;
+  let throttle = 0;
+  const MAX_PARTICLES = 40;
+  let particleCount = 0;
 
-  const density = ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
-  let baseAscii = '';
-  let currentAscii = '';
-  let shuffleInterval;
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - throttle < 40) return;
 
-  function generateAscii() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const cols = 38;
-    const rows = 30;
-    canvas.width = cols;
-    canvas.height = rows;
-    ctx.drawImage(img, 0, 0, cols, rows);
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 12) return;
 
-    try {
-      const data = ctx.getImageData(0, 0, cols, rows).data;
-      let ascii = '';
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const i = (y * cols + x) * 4;
-          const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
-          if (a < 30) { ascii += ' '; continue; }
-          const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-          const idx = Math.floor((1 - brightness) * (density.length - 1));
-          ascii += density[Math.min(idx, density.length - 1)];
-        }
-        ascii += '\n';
-      }
-      baseAscii = ascii;
-      currentAscii = ascii;
-      asciiEl.textContent = ascii;
-    } catch(e) {
-      const fallback = [
-        '          .::::::.          ',
-        '       .:::::::::::.       ',
-        '     .::::: ☤ :::::.     ',
-        '    ::::  HERMEMES  ::::    ',
-        '   ::::    ◆◇◆◇    ::::   ',
-        '   ::::  BSC  KOL  ::::   ',
-        '   ::::  INTEL AI  ::::   ',
-        '    ::::           ::::    ',
-        '     \':::::::::::::::\'     ',
-        '       \'::::::::::\'       ',
-        '          \'::::\'          ',
-      ].join('\n');
-      baseAscii = fallback;
-      currentAscii = fallback;
-      asciiEl.textContent = fallback;
+    throttle = now;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    if (particleCount >= MAX_PARTICLES) return;
+
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+      spawnParticle(e.clientX, e.clientY);
     }
+  });
+
+  function spawnParticle(x, y) {
+    const el = document.createElement('span');
+    el.className = 'ascii-particle';
+    el.textContent = chars[Math.floor(Math.random() * chars.length)];
+
+    const size = 10 + Math.random() * 8;
+    const offsetX = (Math.random() - 0.5) * 24;
+    const offsetY = (Math.random() - 0.5) * 24;
+    const driftX = (Math.random() - 0.5) * 40;
+    const driftY = -15 - Math.random() * 30;
+
+    el.style.left = (x + offsetX) + 'px';
+    el.style.top = (y + offsetY) + 'px';
+    el.style.fontSize = size + 'px';
+    el.style.setProperty('--dx', driftX + 'px');
+    el.style.setProperty('--dy', driftY + 'px');
+
+    document.body.appendChild(el);
+    particleCount++;
+
+    el.addEventListener('animationend', () => {
+      el.remove();
+      particleCount--;
+    });
   }
-
-  if (img.complete && img.naturalWidth > 0) generateAscii();
-  else img.addEventListener('load', generateAscii);
-
-  panel.addEventListener('mouseenter', () => {
-    if (!baseAscii) generateAscii();
-    currentAscii = baseAscii;
-    asciiEl.textContent = currentAscii;
-
-    const glitchChars = '░▒▓█▀▄╗╔╚╝║═┃━☤◆◇●○╬╫╪';
-    let tick = 0;
-
-    shuffleInterval = setInterval(() => {
-      tick++;
-      const lines = currentAscii.split('\n');
-      const numGlitches = 2 + Math.floor(Math.random() * 4);
-
-      for (let g = 0; g < numGlitches; g++) {
-        const rl = Math.floor(Math.random() * lines.length);
-        const line = lines[rl];
-        if (!line || line.length < 2) continue;
-        const rc = Math.floor(Math.random() * line.length);
-        const arr = line.split('');
-        arr[rc] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
-        lines[rl] = arr.join('');
-      }
-
-      if (tick % 8 === 0) {
-        const resetLines = baseAscii.split('\n');
-        const resetLine = Math.floor(Math.random() * lines.length);
-        if (resetLines[resetLine]) lines[resetLine] = resetLines[resetLine];
-      }
-
-      currentAscii = lines.join('\n');
-      asciiEl.textContent = currentAscii;
-    }, 80);
-  });
-
-  panel.addEventListener('mouseleave', () => {
-    clearInterval(shuffleInterval);
-    currentAscii = baseAscii;
-    asciiEl.textContent = baseAscii;
-  });
 })();
 
 /* ─── Init ─── */
