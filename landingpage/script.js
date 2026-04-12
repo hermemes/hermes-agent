@@ -1,65 +1,59 @@
 /* Hermemes Landing — matching hermemes.xyz */
 
-/* ─── Particle Background ─── */
-(function initParticles() {
+/* ─── Matrix Dithering Dot Grid ─── */
+(function initMatrix() {
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
-  let w, h, particles = [];
+  let w, h, cols, rows;
+  const GAP = 16;
 
   function resize() {
     w = canvas.width = window.innerWidth;
     h = canvas.height = window.innerHeight;
+    cols = Math.ceil(w / GAP) + 1;
+    rows = Math.ceil(h / GAP) + 1;
   }
   resize();
   window.addEventListener('resize', resize);
 
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.5 + 0.5,
-      a: Math.random() * 0.3 + 0.05,
-    });
-  }
+  const cx = () => w * 0.5;
+  const cy = () => h * 0.5;
 
-  function draw() {
+  function draw(time) {
+    const t = time * 0.001;
     ctx.clearRect(0, 0, w, h);
 
-    for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0) p.x = w;
-      if (p.x > w) p.x = 0;
-      if (p.y < 0) p.y = h;
-      if (p.y > h) p.y = 0;
+    const centerX = cx();
+    const centerY = cy();
 
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${p.a})`;
-      ctx.fill();
-    }
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const x = col * GAP;
+        const y = row * GAP;
 
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
+        const dx = x - centerX;
+        const dy = y - centerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(255,255,255,${0.04 * (1 - dist / 120)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
+
+        const wave1 = Math.sin(dist * 0.025 - t * 2) * 0.5 + 0.5;
+        const wave2 = (Math.sin(x * 0.01 + t * 0.7) * Math.cos(y * 0.01 + t * 0.5)) * 0.5 + 0.5;
+        const wave3 = Math.sin((x + y) * 0.005 + t * 1.2) * 0.5 + 0.5;
+
+        const combined = wave1 * 0.45 + wave2 * 0.3 + wave3 * 0.25;
+
+        const alpha = 0.02 + combined * 0.23;
+        const radius = 0.3 + combined * 1.9;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.fill();
       }
     }
 
     requestAnimationFrame(draw);
   }
-  draw();
+  requestAnimationFrame(draw);
 })();
 
 /* ─── GitHub Widget — fetch real data ─── */
