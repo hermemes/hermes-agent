@@ -17,7 +17,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 
@@ -464,6 +464,8 @@ token_safety_check = lambda contract: _run_format(contract)
 # ---------------------------------------------------------------------------
 # Tool registry
 # ---------------------------------------------------------------------------
+
+from tools.registry import registry  # noqa: E402
 
 registry.register(
     name="token_safety_check",
