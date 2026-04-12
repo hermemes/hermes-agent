@@ -19,7 +19,6 @@
       <span class="topbar-clock" id="clock">00:00:00</span>
       <button class="tb-btn" onclick="location.reload()">REFRESH</button>
       <button class="tb-btn tb-active" id="btn-auto">AUTO</button>
-      <button class="tb-btn" onclick="toggleLayout()">EDIT LAYOUT</button>
       <a href="https://github.com/hermemes/hermes-agent" target="_blank" class="tb-btn">GITHUB</a>
     </div>
   </header>
@@ -58,55 +57,24 @@
         </div>
       </div>
 
-      <!-- Agent List -->
+      <!-- Agent List (loaded from API) -->
       <div class="panel">
         <h3 class="panel-title">AGENT LIST</h3>
-        <div class="agent-item active">
-          <span class="agent-icon">◆</span>
-          <span class="agent-label">DEFAULT</span>
-          <span class="agent-tag tag-active">ACTIVE</span>
-        </div>
-        <div class="agent-item">
-          <span class="agent-icon">◇</span>
-          <span class="agent-label">KOL-SCANNER</span>
-          <span class="agent-tag tag-cron">CRON</span>
-        </div>
-        <div class="agent-item">
-          <span class="agent-icon">◇</span>
-          <span class="agent-label">SAFETY-CHECKER</span>
-          <span class="agent-tag tag-idle">IDLE</span>
-        </div>
+        <div id="agent-list"></div>
       </div>
 
-      <!-- Recent Sessions -->
+      <!-- Recent Sessions (loaded from API) -->
       <div class="panel">
         <h3 class="panel-title">RECENT SESSIONS</h3>
         <div class="session-list" id="session-list">
-          <div class="session-item">
-            <span class="session-title">KOL Pool Scan</span>
-            <span class="session-time">2m ago</span>
-          </div>
-          <div class="session-item">
-            <span class="session-title">Token Safety Check</span>
-            <span class="session-time">15m ago</span>
-          </div>
-          <div class="session-item">
-            <span class="session-title">Web3 Gas Price</span>
-            <span class="session-time">1h ago</span>
-          </div>
+          <div class="session-item dim">No sessions yet</div>
         </div>
       </div>
 
-      <!-- Info -->
+      <!-- Info (loaded from API) -->
       <div class="panel panel-info">
         <h3 class="panel-title">INFORMATION</h3>
-        <div class="info-row"><span class="info-dot green"></span> OpenRouter: configured</div>
-        <div class="info-row"><span class="info-dot green"></span> BscScan: configured</div>
-        <div class="info-row"><span class="info-dot yellow"></span> Telegram: not configured</div>
-        <div class="info-row"><span class="info-dot yellow"></span> Discord: not configured</div>
-        <div class="info-sep"></div>
-        <div class="info-row dim">Terminal Backend: LOCAL</div>
-        <div class="info-row dim">Agent: Hermemes</div>
+        <div id="info-list">Loading...</div>
       </div>
     </aside>
 
@@ -219,16 +187,7 @@
           <button class="log-tab" data-tab="gateway">GATEWAY</button>
           <button class="log-tab" data-tab="kol">KOL SCANNER</button>
         </div>
-        <div class="log-body" id="log-body">
-          <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-level info">INFO</span> Hermemes Agent initialized with 32 tools</div>
-          <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-level info">INFO</span> OpenRouter API connected — model: google/gemini-2.0-flash</div>
-          <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-level info">INFO</span> BSC RPC connected — chain_id: 56</div>
-          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> BscScan adapter ready</div>
-          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> DexScreener adapter ready</div>
-          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> honeypot.is adapter ready</div>
-          <div class="log-line"><span class="log-ts">00:00:03</span> <span class="log-level info">INFO</span> GoPlus Security adapter ready</div>
-          <div class="log-line"><span class="log-ts">00:00:03</span> <span class="log-level ok">OK</span> All systems operational</div>
-        </div>
+        <div class="log-body" id="log-body"></div>
         <div class="log-footer">
           <span class="log-filter-label">FILTER:</span>
           <input type="text" class="log-filter" placeholder="filter logs..." id="log-filter"/>
