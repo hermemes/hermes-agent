@@ -265,10 +265,11 @@ body {
   .character-wrap { height: 85%; }
 }
 
-#halftone-canvas {
+.character-img {
   height: 100%;
-  width: 100%;
-  display: block;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom right;
 }
 
 /* ═══ GITHUB WIDGET ═══ */

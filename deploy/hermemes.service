@@ -1,0 +1,15 @@
+[Unit]
+Description=Hermemes Unified Server
+After=network.target
+
+[Service]
+Type=simple
+User=hermemes
+WorkingDirectory=/home/hermemes/hermes-agent
+ExecStart=/usr/bin/python3 /home/hermemes/hermes-agent/server.py
+Restart=always
+RestartSec=5
+Environment=PORT=3099
+
+[Install]
+WantedBy=multi-user.target
