@@ -107,21 +107,62 @@ html, body {
 .sidebar-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 /* Profile */
-.profile-panel { padding: 12px; }
-.profile-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.avatar {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), #d49a08);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; color: #0a0e14; font-weight: 700;
+.profile-panel { padding: 14px; display: flex; flex-direction: column; align-items: center; }
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 90px; height: 90px;
+  margin-bottom: 10px;
 }
-.profile-name { font-size: 13px; font-weight: 700; color: var(--gold); display: block; }
+
+.avatar-img {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  border: 2px solid var(--gold);
+  box-shadow:
+    0 0 12px rgba(240, 185, 11, 0.4),
+    0 0 30px rgba(240, 185, 11, 0.15);
+}
+
+.avatar-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,185,11,0.35) 0%, rgba(240,185,11,0.08) 50%, transparent 70%);
+  z-index: 1;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.avatar-pulse {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(240, 185, 11, 0.3);
+  z-index: 3;
+  animation: pulseRing 2.5s ease-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  70% { transform: scale(1.15); opacity: 0; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+
+.profile-meta { text-align: center; margin-bottom: 10px; }
+.profile-name { font-size: 14px; font-weight: 700; color: var(--gold); display: block; letter-spacing: 1px; }
 .profile-tag { font-size: 9px; color: var(--text-dim); }
 .live-dot::before {
   content: '●'; color: var(--green); margin-right: 4px; font-size: 8px;
 }
-.profile-actions { display: flex; gap: 6px; }
+.profile-actions { display: flex; gap: 6px; width: 100%; }
 .sm-btn {
   flex: 1; padding: 5px; font-family: var(--font); font-size: 10px;
   background: var(--gold); color: #0a0e14; border: none; border-radius: 4px;
