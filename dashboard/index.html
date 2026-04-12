@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hermemes Control Interface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- ═══════════════ TOP BAR ═══════════════ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="topbar-title">Hermemes Control Interface</h1>
+      <span class="topbar-sub">embedded Hermes CLI • hermemes</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-clock" id="clock">00:00:00</span>
+      <button class="tb-btn" onclick="location.reload()">REFRESH</button>
+      <button class="tb-btn tb-active" id="btn-auto">AUTO</button>
+      <button class="tb-btn" onclick="toggleLayout()">EDIT LAYOUT</button>
+      <a href="https://github.com/hermemes/hermes-agent" target="_blank" class="tb-btn">GITHUB</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════ MAIN GRID ═══════════════ -->
+  <div class="grid">
+
+    <!-- ──────── LEFT SIDEBAR ──────── -->
+    <aside class="sidebar-left">
+
+      <!-- Profile -->
+      <div class="panel profile-panel">
+        <div class="profile-row">
+          <div class="avatar">☤</div>
+          <div class="profile-info">
+            <span class="profile-name">HERMEMES</span>
+            <span class="profile-tag live-dot">hermemes/hermes-agent</span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="sm-btn" onclick="fetchStatus()">STATUS</button>
+          <button class="sm-btn sm-outline" onclick="fetchStatus()">RESET</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="panel">
+        <h3 class="panel-title">QUICK ACTIONS</h3>
+        <button class="action-btn" onclick="api('/api/status')">HERMES STATUS</button>
+        <button class="action-btn" onclick="api('/api/skills')">HERMES SKILLS</button>
+        <button class="action-btn" onclick="api('/api/cron')">HERMES CRON LIST</button>
+        <button class="action-btn" onclick="api('/api/kol/pool')">KOL POOL</button>
+        <div class="action-row">
+          <button class="action-btn half" onclick="api('/api/config')">HERMES CONFIG</button>
+          <button class="action-btn half" onclick="api('/api/model')">HERMES MODEL</button>
+        </div>
+      </div>
+
+      <!-- Agent List -->
+      <div class="panel">
+        <h3 class="panel-title">AGENT LIST</h3>
+        <div class="agent-item active">
+          <span class="agent-icon">◆</span>
+          <span class="agent-label">DEFAULT</span>
+          <span class="agent-tag tag-active">ACTIVE</span>
+        </div>
+        <div class="agent-item">
+          <span class="agent-icon">◇</span>
+          <span class="agent-label">KOL-SCANNER</span>
+          <span class="agent-tag tag-cron">CRON</span>
+        </div>
+        <div class="agent-item">
+          <span class="agent-icon">◇</span>
+          <span class="agent-label">SAFETY-CHECKER</span>
+          <span class="agent-tag tag-idle">IDLE</span>
+        </div>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="panel">
+        <h3 class="panel-title">RECENT SESSIONS</h3>
+        <div class="session-list" id="session-list">
+          <div class="session-item">
+            <span class="session-title">KOL Pool Scan</span>
+            <span class="session-time">2m ago</span>
+          </div>
+          <div class="session-item">
+            <span class="session-title">Token Safety Check</span>
+            <span class="session-time">15m ago</span>
+          </div>
+          <div class="session-item">
+            <span class="session-title">Web3 Gas Price</span>
+            <span class="session-time">1h ago</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="panel panel-info">
+        <h3 class="panel-title">INFORMATION</h3>
+        <div class="info-row"><span class="info-dot green"></span> OpenRouter: configured</div>
+        <div class="info-row"><span class="info-dot green"></span> BscScan: configured</div>
+        <div class="info-row"><span class="info-dot yellow"></span> Telegram: not configured</div>
+        <div class="info-row"><span class="info-dot yellow"></span> Discord: not configured</div>
+        <div class="info-sep"></div>
+        <div class="info-row dim">Terminal Backend: LOCAL</div>
+        <div class="info-row dim">Agent: Hermemes</div>
+      </div>
+    </aside>
+
+    <!-- ──────── CENTER ──────── -->
+    <main class="center">
+
+      <!-- Top row: System Monitor + Scheduler + File Explorer -->
+      <div class="center-top">
+
+        <!-- System Monitor -->
+        <div class="panel monitor-panel">
+          <h3 class="panel-title">SYSTEM MONITOR <span class="tag-live">● LIVE</span></h3>
+          <div class="monitor-grid">
+            <div class="stat-box">
+              <span class="stat-label">CPU LOAD</span>
+              <span class="stat-value" id="cpu-value">—</span>
+              <div class="bar"><div class="bar-fill cpu-bar" id="cpu-bar" style="width:0%"></div></div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">MEMORY</span>
+              <span class="stat-value" id="mem-value">—</span>
+              <div class="bar"><div class="bar-fill mem-bar" id="mem-bar" style="width:0%"></div></div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">DISK</span>
+              <span class="stat-value" id="disk-value">—</span>
+              <div class="bar"><div class="bar-fill disk-bar" id="disk-bar" style="width:0%"></div></div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">UPTIME</span>
+              <span class="stat-value" id="uptime-value">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scheduler / Cron -->
+        <div class="panel cron-panel">
+          <h3 class="panel-title">SCHEDULER / CRON <span class="tag-dim">● OFF</span></h3>
+          <div class="cron-list" id="cron-list">
+            <div class="cron-empty">No scheduled jobs</div>
+          </div>
+          <div class="cron-footer">
+            <span class="dim-text">Hosting:</span>
+            <span>Local · hermes-agent</span>
+          </div>
+        </div>
+
+        <!-- KOL Pool Overview (replaces file explorer) -->
+        <div class="panel kol-overview-panel">
+          <h3 class="panel-title">KOL POOL OVERVIEW <span class="tag-dim" id="pool-count">0 wallets</span></h3>
+          <div class="kol-stats-grid">
+            <div class="kol-stat">
+              <span class="kol-stat-val" id="kol-a-plus">0</span>
+              <span class="kol-stat-label">A+ Grade</span>
+            </div>
+            <div class="kol-stat">
+              <span class="kol-stat-val" id="kol-a">0</span>
+              <span class="kol-stat-label">A Grade</span>
+            </div>
+            <div class="kol-stat">
+              <span class="kol-stat-val" id="kol-b">0</span>
+              <span class="kol-stat-label">B Grade</span>
+            </div>
+            <div class="kol-stat">
+              <span class="kol-stat-val" id="kol-alerts">0</span>
+              <span class="kol-stat-label">New Alerts</span>
+            </div>
+          </div>
+          <div class="kol-last-scan" id="kol-last-scan">Last scan: never</div>
+        </div>
+      </div>
+
+      <!-- Embedded CLI / Terminal -->
+      <div class="panel terminal-panel">
+        <div class="terminal-bar">
+          <span class="terminal-title">EMBEDDED HERMES CLI</span>
+          <div class="terminal-dots">
+            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal">
+          <pre class="ascii-banner">
+██╗  ██╗███████╗██████╗ ███╗   ███╗███████╗███╗   ███╗███████╗███████╗
+██║  ██║██╔════╝██╔══██╗████╗ ████║██╔════╝████╗ ████║██╔════╝██╔════╝
+███████║█████╗  ██████╔╝██╔████╔██║█████╗  ██╔████╔██║█████╗  ███████╗
+██╔══██║██╔══╝  ██╔══██╗██║╚██╔╝██║██╔══╝  ██║╚██╔╝██║██╔══╝  ╚════██║
+██║  ██║███████╗██║  ██║██║ ╚═╝ ██║███████╗██║ ╚═╝ ██║███████╗███████║
+╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚══════╝</pre>
+          <div class="terminal-info">
+            <p>Hermemes Agent v1.0.0 — BSC KOL Intelligence Brain</p>
+            <p class="dim">Available Tools: <span class="gold">kol_analyze, kol_decision, kol_pool_scan, kol_report</span></p>
+            <p class="dim">                <span class="gold">token_safety_check, token_quick_check</span></p>
+            <p class="dim">                <span class="gold">kol_correlation_matrix, kol_comovement_scan</span></p>
+            <p class="dim">                <span class="gold">web3_get_balance, web3_get_gas_price</span></p>
+            <p class="dim">Available Skills: <span class="cyan">kol-profiler</span></p>
+            <p class="dim">Chain: <span class="gold">BSC (BNB Smart Chain)</span> · Networks: ETH, Polygon, Arbitrum, Base</p>
+          </div>
+          <div class="terminal-input-wrap">
+            <span class="prompt">hermemes $</span>
+            <input type="text" class="terminal-input" id="term-input" placeholder="Type a command..." autocomplete="off"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log Viewer -->
+      <div class="panel log-panel">
+        <div class="log-tabs">
+          <button class="log-tab active" data-tab="agent">AGENT</button>
+          <button class="log-tab" data-tab="errors">ERRORS</button>
+          <button class="log-tab" data-tab="gateway">GATEWAY</button>
+          <button class="log-tab" data-tab="kol">KOL SCANNER</button>
+        </div>
+        <div class="log-body" id="log-body">
+          <div class="log-line"><span class="log-ts">00:00:00</span> <span class="log-level info">INFO</span> Hermemes Agent initialized with 32 tools</div>
+          <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-level info">INFO</span> OpenRouter API connected — model: google/gemini-2.0-flash</div>
+          <div class="log-line"><span class="log-ts">00:00:01</span> <span class="log-level info">INFO</span> BSC RPC connected — chain_id: 56</div>
+          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> BscScan adapter ready</div>
+          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> DexScreener adapter ready</div>
+          <div class="log-line"><span class="log-ts">00:00:02</span> <span class="log-level info">INFO</span> honeypot.is adapter ready</div>
+          <div class="log-line"><span class="log-ts">00:00:03</span> <span class="log-level info">INFO</span> GoPlus Security adapter ready</div>
+          <div class="log-line"><span class="log-ts">00:00:03</span> <span class="log-level ok">OK</span> All systems operational</div>
+        </div>
+        <div class="log-footer">
+          <span class="log-filter-label">FILTER:</span>
+          <input type="text" class="log-filter" placeholder="filter logs..." id="log-filter"/>
+          <span class="log-mask-label">● LIVE</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ──────── RIGHT SIDEBAR ──────── -->
+    <aside class="sidebar-right">
+
+      <!-- BSC Chain Status -->
+      <div class="panel">
+        <h3 class="panel-title">BSC CHAIN STATUS</h3>
+        <div class="chain-stat">
+          <span>Gas Price</span>
+          <span class="chain-val" id="bsc-gas">—</span>
+        </div>
+        <div class="chain-stat">
+          <span>Block</span>
+          <span class="chain-val" id="bsc-block">—</span>
+        </div>
+        <div class="chain-stat">
+          <span>BNB Price</span>
+          <span class="chain-val" id="bnb-price">—</span>
+        </div>
+      </div>
+
+      <!-- Token Usage -->
+      <div class="panel">
+        <h3 class="panel-title">TOKEN USAGE <span class="tag-dim" id="usage-period">TODAY</span></h3>
+        <div class="usage-stat">
+          <span>Total Tokens</span>
+          <span class="usage-val" id="total-tokens">0</span>
+        </div>
+        <div class="usage-stat">
+          <span>Input / Output</span>
+          <span class="usage-val" id="io-tokens">0 / 0</span>
+        </div>
+        <div class="usage-stat">
+          <span>API Calls</span>
+          <span class="usage-val" id="api-calls">0</span>
+        </div>
+        <div class="usage-stat">
+          <span>Sessions</span>
+          <span class="usage-val" id="sessions-count">0</span>
+        </div>
+      </div>
+
+      <!-- Tool Usage Ranking -->
+      <div class="panel">
+        <h3 class="panel-title">TOOL USAGE</h3>
+        <div class="tool-rank-list" id="tool-rank-list">
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">kol_analyze</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:80%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">kol_decision</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:65%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">token_safety_check</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:55%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">web3_get_balance</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:40%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">kol_pool_scan</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:35%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">kol_comovement_scan</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:25%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">web3_get_gas_price</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:20%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">kol_report</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:15%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+          <div class="tool-rank-item">
+            <span class="tool-rank-name">token_quick_check</span>
+            <span class="tool-rank-bar"><span class="tr-fill" style="width:10%"></span></span>
+            <span class="tool-rank-count">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="panel panel-links">
+        <a href="https://x.com/hermemes_" target="_blank" class="link-btn">𝕏 @hermemes_</a>
+        <a href="https://dorahacks.io/hacker/hermemes" target="_blank" class="link-btn">🏆 DoraHacks</a>
+        <a href="https://hermemes.xyz" target="_blank" class="link-btn">🌐 hermemes.xyz</a>
+      </div>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
