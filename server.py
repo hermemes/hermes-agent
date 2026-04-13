@@ -178,7 +178,6 @@ def get_env_status():
         "OpenRouter": "OPENROUTER_API_KEY",
         "BscScan": "BSCSCAN_API_KEY",
         "Telegram": "TELEGRAM_BOT_TOKEN",
-        "Discord": "DISCORD_TOKEN",
         "BSC RPC": "BSC_RPC_URL",
     }
     defaults = {"BSC_RPC_URL": "https://bsc-dataseed1.binance.org"}
