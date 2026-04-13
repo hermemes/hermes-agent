@@ -164,12 +164,13 @@ async function fetchEnvInfo() {
   const el = document.getElementById('info-list');
   if (!data) { el.innerHTML = '<div class="dim">Failed to load</div>'; return; }
 
-  const services = ['OpenRouter', 'BscScan', 'Telegram', 'Discord', 'BSC RPC'];
+  const services = ['OpenRouter', 'BscScan', 'Telegram', 'BSC RPC'];
   let html = '';
 
   for (const svc of services) {
-    const val = data[svc] || 'not configured';
-    const isOk = val.includes('configured');
+    const raw = data[svc] || 'not configured';
+    const isOk = raw.includes('configured');
+    const val = isOk ? 'configured' : 'not configured';
     const dotClass = isOk ? 'green' : 'yellow';
     html += `<div class="info-row"><span class="info-dot ${dotClass}"></span> ${svc}: ${val}</div>`;
   }
