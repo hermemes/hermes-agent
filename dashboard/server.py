@@ -186,7 +186,6 @@ def get_env_status():
         "OpenRouter": "OPENROUTER_API_KEY",
         "BscScan": "BSCSCAN_API_KEY",
         "Telegram": "TELEGRAM_BOT_TOKEN",
-        "Discord": "DISCORD_TOKEN",
         "BSC RPC": "BSC_RPC_URL",
     }
 
@@ -197,7 +196,7 @@ def get_env_status():
         if val:
             checks[label] = "configured"
         elif env_var in defaults:
-            checks[label] = "configured (default)"
+            checks[label] = "configured"
         else:
             checks[label] = "not configured"
 
@@ -218,7 +217,7 @@ def get_env_status():
 
     for label, env_var in env_map.items():
         if checks[label] == "not configured" and env_var in env_from_file:
-            checks[label] = "configured (.env)"
+            checks[label] = "configured"
 
     # Check hermes config for provider info
     config_path = HERMES_DIR / "config.yaml"
@@ -227,7 +226,7 @@ def get_env_status():
             text = config_path.read_text()
             if "openrouter" in text.lower() and checks.get("OpenRouter") == "not configured":
                 # Provider is set but key might be in hermes config
-                checks["OpenRouter"] = "configured (hermes)"
+                checks["OpenRouter"] = "configured"
         except Exception:
             pass
 

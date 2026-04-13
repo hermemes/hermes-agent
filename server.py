@@ -187,7 +187,7 @@ def get_env_status():
         if val:
             checks[label] = "configured"
         elif env_var in defaults:
-            checks[label] = "configured (default)"
+            checks[label] = "configured"
         else:
             checks[label] = "not configured"
 
@@ -207,14 +207,14 @@ def get_env_status():
 
     for label, env_var in env_map.items():
         if checks[label] == "not configured" and env_var in env_from_file:
-            checks[label] = "configured (.env)"
+            checks[label] = "configured"
 
     config_path = HERMES_DIR / "config.yaml"
     if config_path.exists():
         try:
             text = config_path.read_text()
             if "openrouter" in text.lower() and checks.get("OpenRouter") == "not configured":
-                checks["OpenRouter"] = "configured (hermes)"
+                checks["OpenRouter"] = "configured"
         except Exception:
             pass
 
