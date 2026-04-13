@@ -287,6 +287,17 @@ document.getElementById('log-filter').addEventListener('input', renderLogs);
 const termInput = document.getElementById('term-input');
 const termBody = document.getElementById('terminal');
 
+setTimeout(() => {
+  appendTermLine('Welcome! Try these commands:', 'gold');
+  appendTermLine('  gmgn trending       — BSC hot tokens (real-time)', 'text');
+  appendTermLine('  gmgn trending --sol — Solana hot tokens', 'text');
+  appendTermLine('  gmgn smart          — Smart money activity', 'text');
+  appendTermLine('  gmgn token <addr>   — Token deep dive', 'text');
+  appendTermLine('  gmgn security <addr>— Honeypot & tax check', 'text');
+  appendTermLine('  help                — All commands', 'text');
+  appendTermLine('', 'text');
+}, 500);
+
 termInput.addEventListener('keydown', async (e) => {
   if (e.key === 'Enter') {
     const cmd = termInput.value.trim();
