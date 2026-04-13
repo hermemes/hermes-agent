@@ -447,6 +447,34 @@ html, body {
 }
 .link-btn:hover { border-color: var(--gold); color: var(--gold); }
 
+/* ═══ GMGN DATA PANELS ═══ */
+.gmgn-list { max-height: 300px; overflow-y: auto; }
+.gmgn-list::-webkit-scrollbar { width: 3px; }
+.gmgn-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+.gmgn-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 4px; border-bottom: 1px solid var(--border);
+  font-size: 10px; transition: background 0.15s;
+}
+.gmgn-row:hover { background: var(--bg-panel-hover); }
+.gmgn-rank { color: var(--text-muted); width: 16px; text-align: right; flex-shrink: 0; }
+.gmgn-token-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.gmgn-token-name { font-weight: 600; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gmgn-token-tags { font-size: 8px; color: var(--text-dim); }
+.gmgn-price { color: var(--text); font-weight: 500; min-width: 60px; text-align: right; }
+.gmgn-change { font-weight: 700; min-width: 50px; text-align: right; font-size: 10px; }
+
+.gmgn-trade-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px; border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.gmgn-trade-row:hover { background: var(--bg-panel-hover); }
+.gmgn-trade-token { flex: 1; color: var(--gold); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gmgn-trade-wallet { color: var(--text-dim); font-size: 9px; min-width: 70px; }
+.gmgn-trade-amt { color: var(--text); font-weight: 600; min-width: 50px; text-align: right; }
+
 /* ═══ MOBILE — APP VIEW ═══ */
 @media (max-width: 768px) {
   html, body {

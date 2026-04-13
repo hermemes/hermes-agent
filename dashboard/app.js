@@ -164,7 +164,7 @@ async function fetchEnvInfo() {
   const el = document.getElementById('info-list');
   if (!data) { el.innerHTML = '<div class="dim">Failed to load</div>'; return; }
 
-  const services = ['OpenRouter', 'BscScan', 'Telegram', 'BSC RPC'];
+  const services = ['OpenRouter', 'BscScan', 'Telegram', 'GMGN', 'BSC RPC'];
   let html = '';
 
   for (const svc of services) {
@@ -216,6 +216,60 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+/* ─── GMGN Trending (REAL from gmgn.ai) ─── */
+async function fetchGmgnTrending() {
+  const data = await api('/api/gmgn/trending');
+  const el = document.getElementById('gmgn-trending');
+  if (!el) return;
+  if (!data || !data.tokens || data.tokens.length === 0) {
+    el.innerHTML = '<div class="dim" style="padding:8px;font-size:10px">No trending data</div>';
+    return;
+  }
+  el.innerHTML = data.tokens.slice(0, 12).map((t, i) => {
+    const change = t.price_change_1h != null ? Number(t.price_change_1h) * 100 : 0;
+    const changeColor = change >= 0 ? 'var(--green)' : 'var(--red)';
+    const changeStr = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+    const price = t.price != null ? (Number(t.price) < 0.01 ? Number(t.price).toExponential(2) : '$' + Number(t.price).toFixed(4)) : '—';
+    const sm = t.smart_money_count || 0;
+    const kol = t.kol_count || 0;
+    const logoHtml = t.logo ? `<img src="${t.logo}" width="14" height="14" style="border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">` : '';
+    return `<div class="gmgn-row">
+      <span class="gmgn-rank">${i + 1}</span>
+      ${logoHtml}
+      <div class="gmgn-token-info">
+        <span class="gmgn-token-name">${t.symbol || t.name}</span>
+        <span class="gmgn-token-tags">${sm > 0 ? 'SM:' + sm : ''} ${kol > 0 ? 'KOL:' + kol : ''}</span>
+      </div>
+      <span class="gmgn-price">${price}</span>
+      <span class="gmgn-change" style="color:${changeColor}">${changeStr}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── GMGN Smart Money Trending (REAL) ─── */
+async function fetchGmgnSmartMoney() {
+  const data = await api('/api/gmgn/smart-money');
+  const el = document.getElementById('gmgn-smart-money');
+  if (!el) return;
+  if (!data || !data.tokens || data.tokens.length === 0) {
+    el.innerHTML = '<div class="dim" style="padding:8px;font-size:10px">No smart money data</div>';
+    return;
+  }
+  el.innerHTML = data.tokens.slice(0, 10).map((t, i) => {
+    const smCount = t.smart_money_count || 0;
+    const kolCount = t.kol_count || 0;
+    const price = t.price != null ? (Number(t.price) < 0.01 ? Number(t.price).toExponential(2) : '$' + Number(t.price).toFixed(4)) : '—';
+    const logoHtml = t.logo ? `<img src="${t.logo}" width="14" height="14" style="border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">` : '';
+    return `<div class="gmgn-trade-row">
+      <span class="gmgn-rank">${i + 1}</span>
+      ${logoHtml}
+      <span class="gmgn-trade-token">${t.symbol || t.name || '?'}</span>
+      <span class="gmgn-price">${price}</span>
+      <span style="color:var(--gold);font-weight:600;min-width:70px;text-align:right;font-size:9px">SM:${smCount} KOL:${kolCount}</span>
+    </div>`;
+  }).join('');
 }
 
 /* ─── Log Tabs ─── */
@@ -282,6 +336,7 @@ async function executeCommand(cmd) {
         '  kol scan    — Trigger KOL pool scan',
         '  kol analyze <wallet> — Analyze a KOL wallet',
         '  safety <token> — Quick token safety check',
+        '  gmgn        — GMGN on-chain intelligence (type gmgn for subcommands)',
         '  clear       — Clear terminal',
         '  help        — Show this help',
       ].join('\n');
@@ -346,6 +401,57 @@ async function executeCommand(cmd) {
       }
       return 'Usage: safety <token_address>';
 
+    case 'gmgn': {
+      const chain = parts.includes('--sol') ? 'sol' : parts.includes('--eth') ? 'eth' : parts.includes('--base') ? 'base' : 'bsc';
+      const cleanParts = parts.filter(p => !p.startsWith('--'));
+      if (cleanParts[1] === 'trending') {
+        const data = await api(`/api/gmgn/trending${chain !== 'bsc' ? '/' + chain : ''}`);
+        if (!data || !data.tokens) return 'Failed to fetch trending';
+        return `Trending [${chain.toUpperCase()}]:\n` + data.tokens.slice(0, 15).map((t, i) =>
+          `${i+1}. ${t.symbol} — ${t.price ? (t.price < 0.01 ? Number(t.price).toExponential(2) : '$' + Number(t.price).toFixed(4)) : '?'} | SM:${t.smart_money_count||0} KOL:${t.kol_count||0}`
+        ).join('\n');
+      }
+      if (cleanParts[1] === 'token' && cleanParts[2]) {
+        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}`);
+        return data ? JSON.stringify(data, null, 2) : 'Token not found';
+      }
+      if (cleanParts[1] === 'security' && cleanParts[2]) {
+        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}/security`);
+        return data ? JSON.stringify(data, null, 2) : 'Security check failed';
+      }
+      if (cleanParts[1] === 'holders' && cleanParts[2]) {
+        const tag = cleanParts[3] === 'kol' ? '/kol' : cleanParts[3] === 'smart' ? '/smart' : '';
+        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}/holders${tag}`);
+        return data ? JSON.stringify(data, null, 2) : 'Holders data failed';
+      }
+      if (cleanParts[1] === 'wallet' && cleanParts[2]) {
+        const data = await api(`/api/gmgn/wallet/${chain}/${cleanParts[2]}`);
+        return data ? JSON.stringify(data, null, 2) : 'Wallet data failed';
+      }
+      if (cleanParts[1] === 'smart') {
+        const data = await api(`/api/gmgn/smart-money${chain !== 'bsc' ? '/' + chain : ''}`);
+        if (!data || !data.tokens) return 'No smart money data';
+        return `Smart Money [${chain.toUpperCase()}]:\n` + data.tokens.slice(0, 15).map((t, i) =>
+          `${i+1}. ${t.symbol} — SM:${t.smart_money_count||0} | Buy:${t.smart_buy_24h||0} Sell:${t.smart_sell_24h||0}`
+        ).join('\n');
+      }
+      return [
+        'GMGN on-chain intelligence:',
+        '  gmgn trending             — Trending tokens (BSC default)',
+        '  gmgn trending --sol       — Solana trending',
+        '  gmgn trending --eth       — Ethereum trending',
+        '  gmgn smart                — Smart money trending',
+        '  gmgn token <addr>         — Token info',
+        '  gmgn security <addr>      — Token security check',
+        '  gmgn holders <addr>       — Top holders',
+        '  gmgn holders <addr> kol   — KOL holders',
+        '  gmgn holders <addr> smart — Smart money holders',
+        '  gmgn wallet <addr>        — Wallet holdings',
+        '',
+        '  Add --sol / --eth / --base for other chains',
+      ].join('\n');
+    }
+
     default:
       return `Unknown command: ${action}. Type 'help' for available commands.`;
   }
@@ -367,6 +473,8 @@ function refreshAll() {
   fetchKolPool();
   fetchToolUsage();
   fetchSessions();
+  fetchGmgnTrending();
+  fetchGmgnSmartMoney();
 }
 
 function startAutoRefresh() {

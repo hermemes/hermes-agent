@@ -29,6 +29,8 @@ HERMES_DIR = Path.home() / ".hermes"
 START_TIME = time.time()
 
 BSC_RPC = os.environ.get("BSC_RPC_URL", "https://bsc-dataseed1.binance.org")
+GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
+GMGN_BASE = "https://gmgn.ai/defi/quotation/v1"
 
 # ─── Real tracking state ───
 api_call_log = []
@@ -178,6 +180,7 @@ def get_env_status():
         "OpenRouter": "OPENROUTER_API_KEY",
         "BscScan": "BSCSCAN_API_KEY",
         "Telegram": "TELEGRAM_BOT_TOKEN",
+        "GMGN": "GMGN_API_KEY",
         "BSC RPC": "BSC_RPC_URL",
     }
     defaults = {"BSC_RPC_URL": "https://bsc-dataseed1.binance.org"}
@@ -384,6 +387,174 @@ def _time_ago(iso_ts):
         return "just now"
 
 
+# ─── GMGN.ai API (REAL on-chain data) ───
+
+def _gmgn_get(url):
+    key = GMGN_API_KEY
+    if not key:
+        env_file = PROJECT_DIR / ".env"
+        if env_file.exists():
+            for line in env_file.read_text().splitlines():
+                if line.strip().startswith("GMGN_API_KEY="):
+                    key = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    break
+    if not key:
+        return None
+
+    headers = {
+        "Accept": "application/json",
+        "Referer": "https://gmgn.ai/",
+        "Origin": "https://gmgn.ai",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    }
+    if key:
+        headers["X-APIKEY"] = key
+
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read())
+    except Exception as e:
+        print(f"GMGN API error ({url}): {e}")
+        return None
+
+
+def _parse_token(t):
+    symbol = t.get("symbol") or "?"
+    name = t.get("name") or symbol
+    return {
+        "name": name,
+        "symbol": symbol,
+        "address": t.get("address", ""),
+        "price": t.get("price"),
+        "price_change_1h": t.get("price_change_percent"),
+        "price_change_5m": t.get("price_change_percent5m"),
+        "volume_24h": t.get("volume"),
+        "market_cap": t.get("market_cap"),
+        "liquidity": t.get("liquidity"),
+        "holders": t.get("holder_count"),
+        "buy_tax": t.get("buy_tax"),
+        "sell_tax": t.get("sell_tax"),
+        "is_honeypot": t.get("is_honeypot"),
+        "smart_buy_24h": t.get("smart_buy_24h"),
+        "smart_sell_24h": t.get("smart_sell_24h"),
+        "smart_money_count": t.get("smart_degen_count"),
+        "kol_count": t.get("renowned_count"),
+        "swaps_24h": t.get("swaps"),
+        "logo": t.get("logo"),
+    }
+
+
+def gmgn_trending(chain="bsc", interval="1h", orderby="swaps"):
+    url = (
+        f"{GMGN_BASE}/rank/{chain}/swaps/{interval}"
+        f"?orderby={orderby}&direction=desc"
+        f"&filters[]=not_honeypot"
+    )
+    data = _gmgn_get(url)
+    if not data or data.get("code") != 0:
+        return {"tokens": [], "error": data.get("msg") if data else "GMGN unavailable"}
+    rank = data.get("data", {}).get("rank", [])
+    return {"tokens": [_parse_token(t) for t in rank[:20]], "chain": chain, "interval": interval}
+
+
+def gmgn_smart_trending(chain="bsc", interval="24h"):
+    url = (
+        f"{GMGN_BASE}/rank/{chain}/swaps/{interval}"
+        f"?orderby=smartmoney&direction=desc"
+        f"&filters[]=not_honeypot"
+    )
+    data = _gmgn_get(url)
+    if not data or data.get("code") != 0:
+        return {"tokens": [], "error": data.get("msg") if data else "GMGN unavailable"}
+    rank = data.get("data", {}).get("rank", [])
+    return {"tokens": [_parse_token(t) for t in rank[:20]], "chain": chain, "interval": interval, "sort": "smartmoney"}
+
+
+def gmgn_token_info(chain, address):
+    url = f"https://gmgn.ai/api/v1/token_info/{chain}/{address}"
+    data = _gmgn_get(url)
+    if not data or "data" not in data:
+        return {"error": "Token not found or GMGN unavailable"}
+    t = data["data"]
+    return {
+        "name": t.get("name"),
+        "symbol": t.get("symbol"),
+        "address": address,
+        "chain": chain,
+        "price": t.get("price"),
+        "market_cap": t.get("market_cap"),
+        "volume_24h": t.get("volume_24h"),
+        "holder_count": t.get("holder_count"),
+        "liquidity": t.get("liquidity"),
+        "smart_money_count": t.get("smart_degen_count"),
+        "kol_count": t.get("renowned_count"),
+        "creation_time": t.get("creation_timestamp"),
+        "logo": t.get("logo"),
+    }
+
+
+def gmgn_token_security(chain, address):
+    url = f"https://gmgn.ai/api/v1/token_security/{chain}/{address}"
+    data = _gmgn_get(url)
+    if not data or "data" not in data:
+        return {"error": "Security data unavailable"}
+    s = data["data"]
+    return {
+        "address": address,
+        "chain": chain,
+        "is_honeypot": s.get("is_honeypot"),
+        "buy_tax": s.get("buy_tax"),
+        "sell_tax": s.get("sell_tax"),
+        "is_open_source": s.get("is_open_source"),
+        "is_proxy": s.get("is_proxy"),
+        "is_mintable": s.get("is_mintable"),
+        "owner_address": s.get("owner_address"),
+        "top10_holder_rate": s.get("top_10_holder_rate"),
+    }
+
+
+def gmgn_top_holders(chain, address, tag=None):
+    url = f"https://gmgn.ai/api/v1/token_top_holders/{chain}/{address}?limit=20&orderby=amount_percentage&direction=desc"
+    if tag:
+        url += f"&tag={tag}"
+    data = _gmgn_get(url)
+    if not data or "data" not in data:
+        return {"holders": [], "error": "Data unavailable"}
+    holders = []
+    for h in (data.get("data") or [])[:20]:
+        holders.append({
+            "wallet": h.get("address"),
+            "amount_pct": h.get("amount_percentage"),
+            "profit": h.get("profit"),
+            "unrealized_profit": h.get("unrealized_profit"),
+            "tags": h.get("tags", []),
+        })
+    return {"holders": holders, "tag": tag or "all", "token": address, "chain": chain}
+
+
+def gmgn_kol_trades():
+    return gmgn_trending(chain="bsc", interval="1h", orderby="smartmoney")
+
+
+def gmgn_wallet_holdings(chain, wallet):
+    url = f"https://gmgn.ai/api/v1/wallet_holdings/{chain}/{wallet}?limit=30"
+    data = _gmgn_get(url)
+    if not data or "data" not in data:
+        return {"holdings": [], "error": "Wallet data unavailable"}
+    holdings = []
+    for h in (data.get("data") or [])[:30]:
+        holdings.append({
+            "token_name": h.get("token_name") or h.get("symbol"),
+            "token_address": h.get("token_address"),
+            "balance": h.get("balance"),
+            "value_usd": h.get("usd_value"),
+            "profit": h.get("realized_profit"),
+            "unrealized_pnl": h.get("unrealized_profit"),
+        })
+    return {"wallet": wallet, "holdings": holdings, "chain": chain}
+
+
 def get_agents():
     agents = [{"name": "HERMEMES", "status": "active", "type": "default"}]
     cron_dir = PROJECT_DIR / "cron"
@@ -470,9 +641,39 @@ class UnifiedHandler(SimpleHTTPRequestHandler):
             "/api/model": lambda: {"model": get_agent_status().get("model", "—")},
             "/api/skills": lambda: {"skills": ["kol-profiler"]},
             "/api/kol/scan": lambda: {"status": "scan_triggered", "message": "KOL pool scan started"},
+            "/api/gmgn/trending": lambda: gmgn_trending("bsc", "1h"),
+            "/api/gmgn/trending/sol": lambda: gmgn_trending("sol", "1h"),
+            "/api/gmgn/trending/eth": lambda: gmgn_trending("eth", "1h"),
+            "/api/gmgn/trending/base": lambda: gmgn_trending("base", "1h"),
+            "/api/gmgn/smart-money": lambda: gmgn_smart_trending("bsc", "24h"),
+            "/api/gmgn/smart-money/sol": lambda: gmgn_smart_trending("sol", "24h"),
         }
 
-        if path.startswith("/api/kol/analyze/"):
+        if path.startswith("/api/gmgn/token/"):
+            seg = path.split("/api/gmgn/token/")[1]
+            parts_gm = seg.strip("/").split("/")
+            chain_g = parts_gm[0] if len(parts_gm) >= 2 else "bsc"
+            addr = parts_gm[1] if len(parts_gm) >= 2 else parts_gm[0]
+            rest = "/".join(parts_gm[2:]) if len(parts_gm) > 2 else ""
+            if rest == "security":
+                handler = lambda c=chain_g, a=addr: gmgn_token_security(c, a)
+            elif rest == "holders":
+                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a)
+            elif rest == "holders/kol":
+                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a, tag="renowned")
+            elif rest == "holders/smart":
+                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a, tag="smart_degen")
+            else:
+                handler = lambda c=chain_g, a=addr: gmgn_token_info(c, a)
+            _track_tool_call("gmgn_token")
+        elif path.startswith("/api/gmgn/wallet/"):
+            seg = path.split("/api/gmgn/wallet/")[1]
+            parts_gm = seg.strip("/").split("/")
+            chain_g = parts_gm[0] if len(parts_gm) >= 2 else "bsc"
+            wallet = parts_gm[1] if len(parts_gm) >= 2 else parts_gm[0]
+            handler = lambda c=chain_g, w=wallet: gmgn_wallet_holdings(c, w)
+            _track_tool_call("gmgn_wallet")
+        elif path.startswith("/api/kol/analyze/"):
             wallet = path.split("/")[-1]
             _track_tool_call("kol_analyze")
             handler = lambda w=wallet: {"wallet": w, "status": "analysis_queued",
