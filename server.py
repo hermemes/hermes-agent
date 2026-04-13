@@ -29,8 +29,8 @@ HERMES_DIR = Path.home() / ".hermes"
 START_TIME = time.time()
 
 BSC_RPC = os.environ.get("BSC_RPC_URL", "https://bsc-dataseed1.binance.org")
-GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
-GMGN_BASE = "https://gmgn.ai/defi/quotation/v1"
+INTEL_API_KEY = os.environ.get("INTEL_API_KEY", "") or os.environ.get("GMGN_API_KEY", "")
+INTEL_BASE = "https://gmgn.ai/defi/quotation/v1"
 
 # ─── Real tracking state ───
 api_call_log = []
@@ -180,13 +180,14 @@ def get_env_status():
         "OpenRouter": "OPENROUTER_API_KEY",
         "BscScan": "BSCSCAN_API_KEY",
         "Telegram": "TELEGRAM_BOT_TOKEN",
-        "GMGN": "GMGN_API_KEY",
+        "On-Chain Intel": "INTEL_API_KEY",
         "BSC RPC": "BSC_RPC_URL",
     }
     defaults = {"BSC_RPC_URL": "https://bsc-dataseed1.binance.org"}
 
+    aliases = {"INTEL_API_KEY": "GMGN_API_KEY"}
     for label, env_var in env_map.items():
-        val = os.environ.get(env_var, "")
+        val = os.environ.get(env_var, "") or os.environ.get(aliases.get(env_var, ""), "")
         if val:
             checks[label] = "configured"
         elif env_var in defaults:
@@ -387,15 +388,16 @@ def _time_ago(iso_ts):
         return "just now"
 
 
-# ─── GMGN.ai API (REAL on-chain data) ───
+# ─── On-Chain Intelligence API (REAL data) ───
 
-def _gmgn_get(url):
-    key = GMGN_API_KEY
+def _intel_fetch(url):
+    key = INTEL_API_KEY
     if not key:
         env_file = PROJECT_DIR / ".env"
         if env_file.exists():
             for line in env_file.read_text().splitlines():
-                if line.strip().startswith("GMGN_API_KEY="):
+                stripped = line.strip()
+                if stripped.startswith("INTEL_API_KEY=") or stripped.startswith("GMGN_API_KEY="):
                     key = line.split("=", 1)[1].strip().strip('"').strip("'")
                     break
     if not key:
@@ -415,7 +417,7 @@ def _gmgn_get(url):
         with urllib.request.urlopen(req, timeout=15) as resp:
             return json.loads(resp.read())
     except Exception as e:
-        print(f"GMGN API error ({url}): {e}")
+        print(f"Intel API error ({url}): {e}")
         return None
 
 
@@ -445,37 +447,37 @@ def _parse_token(t):
     }
 
 
-def gmgn_trending(chain="bsc", interval="1h", orderby="swaps"):
+def intel_trending(chain="bsc", interval="1h", orderby="swaps"):
     url = (
-        f"{GMGN_BASE}/rank/{chain}/swaps/{interval}"
+        f"{INTEL_BASE}/rank/{chain}/swaps/{interval}"
         f"?orderby={orderby}&direction=desc"
         f"&filters[]=not_honeypot"
     )
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or data.get("code") != 0:
-        return {"tokens": [], "error": data.get("msg") if data else "GMGN unavailable"}
+        return {"tokens": [], "error": data.get("msg") if data else "Data unavailable"}
     rank = data.get("data", {}).get("rank", [])
     return {"tokens": [_parse_token(t) for t in rank[:20]], "chain": chain, "interval": interval}
 
 
-def gmgn_smart_trending(chain="bsc", interval="24h"):
+def intel_smart_trending(chain="bsc", interval="24h"):
     url = (
-        f"{GMGN_BASE}/rank/{chain}/swaps/{interval}"
+        f"{INTEL_BASE}/rank/{chain}/swaps/{interval}"
         f"?orderby=smartmoney&direction=desc"
         f"&filters[]=not_honeypot"
     )
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or data.get("code") != 0:
-        return {"tokens": [], "error": data.get("msg") if data else "GMGN unavailable"}
+        return {"tokens": [], "error": data.get("msg") if data else "Data unavailable"}
     rank = data.get("data", {}).get("rank", [])
     return {"tokens": [_parse_token(t) for t in rank[:20]], "chain": chain, "interval": interval, "sort": "smartmoney"}
 
 
-def gmgn_token_info(chain, address):
+def intel_token_info(chain, address):
     url = f"https://gmgn.ai/api/v1/token_info/{chain}/{address}"
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or "data" not in data:
-        return {"error": "Token not found or GMGN unavailable"}
+        return {"error": "Token not found"}
     t = data["data"]
     return {
         "name": t.get("name"),
@@ -494,9 +496,9 @@ def gmgn_token_info(chain, address):
     }
 
 
-def gmgn_token_security(chain, address):
+def intel_token_security(chain, address):
     url = f"https://gmgn.ai/api/v1/token_security/{chain}/{address}"
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or "data" not in data:
         return {"error": "Security data unavailable"}
     s = data["data"]
@@ -514,11 +516,11 @@ def gmgn_token_security(chain, address):
     }
 
 
-def gmgn_top_holders(chain, address, tag=None):
+def intel_top_holders(chain, address, tag=None):
     url = f"https://gmgn.ai/api/v1/token_top_holders/{chain}/{address}?limit=20&orderby=amount_percentage&direction=desc"
     if tag:
         url += f"&tag={tag}"
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or "data" not in data:
         return {"holders": [], "error": "Data unavailable"}
     holders = []
@@ -533,13 +535,13 @@ def gmgn_top_holders(chain, address, tag=None):
     return {"holders": holders, "tag": tag or "all", "token": address, "chain": chain}
 
 
-def gmgn_kol_trades():
-    return gmgn_trending(chain="bsc", interval="1h", orderby="smartmoney")
+def intel_kol_trades():
+    return intel_trending(chain="bsc", interval="1h", orderby="smartmoney")
 
 
-def gmgn_wallet_holdings(chain, wallet):
+def intel_wallet_holdings(chain, wallet):
     url = f"https://gmgn.ai/api/v1/wallet_holdings/{chain}/{wallet}?limit=30"
-    data = _gmgn_get(url)
+    data = _intel_fetch(url)
     if not data or "data" not in data:
         return {"holdings": [], "error": "Wallet data unavailable"}
     holdings = []
@@ -641,38 +643,38 @@ class UnifiedHandler(SimpleHTTPRequestHandler):
             "/api/model": lambda: {"model": get_agent_status().get("model", "—")},
             "/api/skills": lambda: {"skills": ["kol-profiler"]},
             "/api/kol/scan": lambda: {"status": "scan_triggered", "message": "KOL pool scan started"},
-            "/api/gmgn/trending": lambda: gmgn_trending("bsc", "1h"),
-            "/api/gmgn/trending/sol": lambda: gmgn_trending("sol", "1h"),
-            "/api/gmgn/trending/eth": lambda: gmgn_trending("eth", "1h"),
-            "/api/gmgn/trending/base": lambda: gmgn_trending("base", "1h"),
-            "/api/gmgn/smart-money": lambda: gmgn_smart_trending("bsc", "24h"),
-            "/api/gmgn/smart-money/sol": lambda: gmgn_smart_trending("sol", "24h"),
+            "/api/intel/trending": lambda: intel_trending("bsc", "1h"),
+            "/api/intel/trending/sol": lambda: intel_trending("sol", "1h"),
+            "/api/intel/trending/eth": lambda: intel_trending("eth", "1h"),
+            "/api/intel/trending/base": lambda: intel_trending("base", "1h"),
+            "/api/intel/smart-money": lambda: intel_smart_trending("bsc", "24h"),
+            "/api/intel/smart-money/sol": lambda: intel_smart_trending("sol", "24h"),
         }
 
-        if path.startswith("/api/gmgn/token/"):
-            seg = path.split("/api/gmgn/token/")[1]
-            parts_gm = seg.strip("/").split("/")
-            chain_g = parts_gm[0] if len(parts_gm) >= 2 else "bsc"
-            addr = parts_gm[1] if len(parts_gm) >= 2 else parts_gm[0]
-            rest = "/".join(parts_gm[2:]) if len(parts_gm) > 2 else ""
+        if path.startswith("/api/intel/token/"):
+            seg = path.split("/api/intel/token/")[1]
+            parts_i = seg.strip("/").split("/")
+            chain_i = parts_i[0] if len(parts_i) >= 2 else "bsc"
+            addr = parts_i[1] if len(parts_i) >= 2 else parts_i[0]
+            rest = "/".join(parts_i[2:]) if len(parts_i) > 2 else ""
             if rest == "security":
-                handler = lambda c=chain_g, a=addr: gmgn_token_security(c, a)
+                handler = lambda c=chain_i, a=addr: intel_token_security(c, a)
             elif rest == "holders":
-                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a)
+                handler = lambda c=chain_i, a=addr: intel_top_holders(c, a)
             elif rest == "holders/kol":
-                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a, tag="renowned")
+                handler = lambda c=chain_i, a=addr: intel_top_holders(c, a, tag="renowned")
             elif rest == "holders/smart":
-                handler = lambda c=chain_g, a=addr: gmgn_top_holders(c, a, tag="smart_degen")
+                handler = lambda c=chain_i, a=addr: intel_top_holders(c, a, tag="smart_degen")
             else:
-                handler = lambda c=chain_g, a=addr: gmgn_token_info(c, a)
-            _track_tool_call("gmgn_token")
-        elif path.startswith("/api/gmgn/wallet/"):
-            seg = path.split("/api/gmgn/wallet/")[1]
-            parts_gm = seg.strip("/").split("/")
-            chain_g = parts_gm[0] if len(parts_gm) >= 2 else "bsc"
-            wallet = parts_gm[1] if len(parts_gm) >= 2 else parts_gm[0]
-            handler = lambda c=chain_g, w=wallet: gmgn_wallet_holdings(c, w)
-            _track_tool_call("gmgn_wallet")
+                handler = lambda c=chain_i, a=addr: intel_token_info(c, a)
+            _track_tool_call("intel_token")
+        elif path.startswith("/api/intel/wallet/"):
+            seg = path.split("/api/intel/wallet/")[1]
+            parts_i = seg.strip("/").split("/")
+            chain_i = parts_i[0] if len(parts_i) >= 2 else "bsc"
+            wallet = parts_i[1] if len(parts_i) >= 2 else parts_i[0]
+            handler = lambda c=chain_i, w=wallet: intel_wallet_holdings(c, w)
+            _track_tool_call("intel_wallet")
         elif path.startswith("/api/kol/analyze/"):
             wallet = path.split("/")[-1]
             _track_tool_call("kol_analyze")

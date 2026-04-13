@@ -164,7 +164,7 @@ async function fetchEnvInfo() {
   const el = document.getElementById('info-list');
   if (!data) { el.innerHTML = '<div class="dim">Failed to load</div>'; return; }
 
-  const services = ['OpenRouter', 'BscScan', 'Telegram', 'GMGN', 'BSC RPC'];
+  const services = ['OpenRouter', 'BscScan', 'Telegram', 'On-Chain Intel', 'BSC RPC'];
   let html = '';
 
   for (const svc of services) {
@@ -218,10 +218,10 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-/* ─── GMGN Trending (REAL from gmgn.ai) ─── */
-async function fetchGmgnTrending() {
-  const data = await api('/api/gmgn/trending');
-  const el = document.getElementById('gmgn-trending');
+/* ─── On-Chain Trending (REAL) ─── */
+async function fetchIntelTrending() {
+  const data = await api('/api/intel/trending');
+  const el = document.getElementById('intel-trending');
   if (!el) return;
   if (!data || !data.tokens || data.tokens.length === 0) {
     el.innerHTML = '<div class="dim" style="padding:8px;font-size:10px">No trending data</div>';
@@ -235,23 +235,23 @@ async function fetchGmgnTrending() {
     const sm = t.smart_money_count || 0;
     const kol = t.kol_count || 0;
     const logoHtml = t.logo ? `<img src="${t.logo}" width="14" height="14" style="border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">` : '';
-    return `<div class="gmgn-row">
-      <span class="gmgn-rank">${i + 1}</span>
+    return `<div class="intel-row">
+      <span class="intel-rank">${i + 1}</span>
       ${logoHtml}
-      <div class="gmgn-token-info">
-        <span class="gmgn-token-name">${t.symbol || t.name}</span>
-        <span class="gmgn-token-tags">${sm > 0 ? 'SM:' + sm : ''} ${kol > 0 ? 'KOL:' + kol : ''}</span>
+      <div class="intel-token-info">
+        <span class="intel-token-name">${t.symbol || t.name}</span>
+        <span class="intel-token-tags">${sm > 0 ? 'SM:' + sm : ''} ${kol > 0 ? 'KOL:' + kol : ''}</span>
       </div>
-      <span class="gmgn-price">${price}</span>
-      <span class="gmgn-change" style="color:${changeColor}">${changeStr}</span>
+      <span class="intel-price">${price}</span>
+      <span class="intel-change" style="color:${changeColor}">${changeStr}</span>
     </div>`;
   }).join('');
 }
 
-/* ─── GMGN Smart Money Trending (REAL) ─── */
-async function fetchGmgnSmartMoney() {
-  const data = await api('/api/gmgn/smart-money');
-  const el = document.getElementById('gmgn-smart-money');
+/* ─── Smart Money Trending (REAL) ─── */
+async function fetchIntelSmartMoney() {
+  const data = await api('/api/intel/smart-money');
+  const el = document.getElementById('intel-smart-money');
   if (!el) return;
   if (!data || !data.tokens || data.tokens.length === 0) {
     el.innerHTML = '<div class="dim" style="padding:8px;font-size:10px">No smart money data</div>';
@@ -262,11 +262,11 @@ async function fetchGmgnSmartMoney() {
     const kolCount = t.kol_count || 0;
     const price = t.price != null ? (Number(t.price) < 0.01 ? Number(t.price).toExponential(2) : '$' + Number(t.price).toFixed(4)) : '—';
     const logoHtml = t.logo ? `<img src="${t.logo}" width="14" height="14" style="border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">` : '';
-    return `<div class="gmgn-trade-row">
-      <span class="gmgn-rank">${i + 1}</span>
+    return `<div class="intel-trade-row">
+      <span class="intel-rank">${i + 1}</span>
       ${logoHtml}
-      <span class="gmgn-trade-token">${t.symbol || t.name || '?'}</span>
-      <span class="gmgn-price">${price}</span>
+      <span class="intel-trade-token">${t.symbol || t.name || '?'}</span>
+      <span class="intel-price">${price}</span>
       <span style="color:var(--gold);font-weight:600;min-width:70px;text-align:right;font-size:9px">SM:${smCount} KOL:${kolCount}</span>
     </div>`;
   }).join('');
@@ -289,11 +289,11 @@ const termBody = document.getElementById('terminal');
 
 setTimeout(() => {
   appendTermLine('Welcome! Try these commands:', 'gold');
-  appendTermLine('  gmgn trending       — BSC hot tokens (real-time)', 'text');
-  appendTermLine('  gmgn trending --sol — Solana hot tokens', 'text');
-  appendTermLine('  gmgn smart          — Smart money activity', 'text');
-  appendTermLine('  gmgn token <addr>   — Token deep dive', 'text');
-  appendTermLine('  gmgn security <addr>— Honeypot & tax check', 'text');
+  appendTermLine('  intel trending       — BSC hot tokens (real-time)', 'text');
+  appendTermLine('  intel trending --sol — Solana hot tokens', 'text');
+  appendTermLine('  intel smart          — Smart money activity', 'text');
+  appendTermLine('  intel token <addr>   — Token deep dive', 'text');
+  appendTermLine('  intel security <addr>— Honeypot & tax check', 'text');
   appendTermLine('  help                — All commands', 'text');
   appendTermLine('', 'text');
 }, 500);
@@ -347,7 +347,7 @@ async function executeCommand(cmd) {
         '  kol scan    — Trigger KOL pool scan',
         '  kol analyze <wallet> — Analyze a KOL wallet',
         '  safety <token> — Quick token safety check',
-        '  gmgn        — GMGN on-chain intelligence (type gmgn for subcommands)',
+        '  intel       — On-chain intelligence (type intel for subcommands)',
         '  clear       — Clear terminal',
         '  help        — Show this help',
       ].join('\n');
@@ -412,52 +412,52 @@ async function executeCommand(cmd) {
       }
       return 'Usage: safety <token_address>';
 
-    case 'gmgn': {
+    case 'intel': {
       const chain = parts.includes('--sol') ? 'sol' : parts.includes('--eth') ? 'eth' : parts.includes('--base') ? 'base' : 'bsc';
       const cleanParts = parts.filter(p => !p.startsWith('--'));
       if (cleanParts[1] === 'trending') {
-        const data = await api(`/api/gmgn/trending${chain !== 'bsc' ? '/' + chain : ''}`);
+        const data = await api(`/api/intel/trending${chain !== 'bsc' ? '/' + chain : ''}`);
         if (!data || !data.tokens) return 'Failed to fetch trending';
         return `Trending [${chain.toUpperCase()}]:\n` + data.tokens.slice(0, 15).map((t, i) =>
           `${i+1}. ${t.symbol} — ${t.price ? (t.price < 0.01 ? Number(t.price).toExponential(2) : '$' + Number(t.price).toFixed(4)) : '?'} | SM:${t.smart_money_count||0} KOL:${t.kol_count||0}`
         ).join('\n');
       }
       if (cleanParts[1] === 'token' && cleanParts[2]) {
-        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}`);
+        const data = await api(`/api/intel/token/${chain}/${cleanParts[2]}`);
         return data ? JSON.stringify(data, null, 2) : 'Token not found';
       }
       if (cleanParts[1] === 'security' && cleanParts[2]) {
-        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}/security`);
+        const data = await api(`/api/intel/token/${chain}/${cleanParts[2]}/security`);
         return data ? JSON.stringify(data, null, 2) : 'Security check failed';
       }
       if (cleanParts[1] === 'holders' && cleanParts[2]) {
         const tag = cleanParts[3] === 'kol' ? '/kol' : cleanParts[3] === 'smart' ? '/smart' : '';
-        const data = await api(`/api/gmgn/token/${chain}/${cleanParts[2]}/holders${tag}`);
+        const data = await api(`/api/intel/token/${chain}/${cleanParts[2]}/holders${tag}`);
         return data ? JSON.stringify(data, null, 2) : 'Holders data failed';
       }
       if (cleanParts[1] === 'wallet' && cleanParts[2]) {
-        const data = await api(`/api/gmgn/wallet/${chain}/${cleanParts[2]}`);
+        const data = await api(`/api/intel/wallet/${chain}/${cleanParts[2]}`);
         return data ? JSON.stringify(data, null, 2) : 'Wallet data failed';
       }
       if (cleanParts[1] === 'smart') {
-        const data = await api(`/api/gmgn/smart-money${chain !== 'bsc' ? '/' + chain : ''}`);
+        const data = await api(`/api/intel/smart-money${chain !== 'bsc' ? '/' + chain : ''}`);
         if (!data || !data.tokens) return 'No smart money data';
         return `Smart Money [${chain.toUpperCase()}]:\n` + data.tokens.slice(0, 15).map((t, i) =>
           `${i+1}. ${t.symbol} — SM:${t.smart_money_count||0} | Buy:${t.smart_buy_24h||0} Sell:${t.smart_sell_24h||0}`
         ).join('\n');
       }
       return [
-        'GMGN on-chain intelligence:',
-        '  gmgn trending             — Trending tokens (BSC default)',
-        '  gmgn trending --sol       — Solana trending',
-        '  gmgn trending --eth       — Ethereum trending',
-        '  gmgn smart                — Smart money trending',
-        '  gmgn token <addr>         — Token info',
-        '  gmgn security <addr>      — Token security check',
-        '  gmgn holders <addr>       — Top holders',
-        '  gmgn holders <addr> kol   — KOL holders',
-        '  gmgn holders <addr> smart — Smart money holders',
-        '  gmgn wallet <addr>        — Wallet holdings',
+        'On-chain intelligence:',
+        '  intel trending             — Trending tokens (BSC default)',
+        '  intel trending --sol       — Solana trending',
+        '  intel trending --eth       — Ethereum trending',
+        '  intel smart                — Smart money trending',
+        '  intel token <addr>         — Token info',
+        '  intel security <addr>      — Token security check',
+        '  intel holders <addr>       — Top holders',
+        '  intel holders <addr> kol   — KOL holders',
+        '  intel holders <addr> smart — Smart money holders',
+        '  intel wallet <addr>        — Wallet holdings',
         '',
         '  Add --sol / --eth / --base for other chains',
       ].join('\n');
@@ -484,8 +484,8 @@ function refreshAll() {
   fetchKolPool();
   fetchToolUsage();
   fetchSessions();
-  fetchGmgnTrending();
-  fetchGmgnSmartMoney();
+  fetchIntelTrending();
+  fetchIntelSmartMoney();
 }
 
 function startAutoRefresh() {
